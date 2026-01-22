@@ -18,7 +18,7 @@
   <meta property="og:title" content="Fariiq - 3PL Fleet Operations Platform">
   <meta property="og:description" content="Automate your 3PL fleet operations with intelligent timesheet reconciliation and real-time reporting.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://fariiq.com">
+  <meta property="og:url" content="https://www.fariiq.com">
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="images/fariiq_logo.svg">
@@ -26,10 +26,13 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/styles.css">
+
+  <!-- Translations (load early) -->
+  <script src="js/translations.js"></script>
 
   <title>Fariiq - 3PL Fleet Operations Platform</title>
 </head>
@@ -42,21 +45,21 @@
       </a>
 
       <ul class="nav__menu">
-        <li><a href="#features" class="nav__link">Features</a></li>
-        <li><a href="#pricing" class="nav__link">Pricing</a></li>
-        <li><a href="#about" class="nav__link">About</a></li>
-        <li><a href="#contact" class="nav__link">Contact</a></li>
+        <li><a href="#features" class="nav__link" data-i18n="nav_features">Features</a></li>
+        <li><a href="#pricing" class="nav__link" data-i18n="nav_pricing">Pricing</a></li>
+        <li><a href="#about" class="nav__link" data-i18n="nav_about">About</a></li>
+        <li><a href="#contact" class="nav__link" data-i18n="nav_contact">Contact</a></li>
       </ul>
 
       <div class="nav__actions">
-        <a href="ar/" class="nav__lang-toggle">
+        <button class="nav__lang-toggle" onclick="toggleLanguage()">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/>
             <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
           </svg>
-          العربية
-        </a>
-        <a href="https://app.fariiq.com" class="btn btn--primary">Login</a>
+          <span data-i18n="nav_lang_switch">العربية</span>
+        </button>
+        <a href="https://app.fariiq.com" class="btn btn--primary" data-i18n="nav_login">Login</a>
 
         <button class="nav__mobile-toggle" aria-label="Toggle menu">
           <span></span>
@@ -68,11 +71,11 @@
 
     <!-- Mobile Menu -->
     <div class="nav__mobile-menu">
-      <a href="#features" class="nav__link">Features</a>
-      <a href="#pricing" class="nav__link">Pricing</a>
-      <a href="#about" class="nav__link">About</a>
-      <a href="#contact" class="nav__link">Contact</a>
-      <a href="ar/" class="nav__link">العربية</a>
+      <a href="#features" class="nav__link" data-i18n="nav_features">Features</a>
+      <a href="#pricing" class="nav__link" data-i18n="nav_pricing">Pricing</a>
+      <a href="#about" class="nav__link" data-i18n="nav_about">About</a>
+      <a href="#contact" class="nav__link" data-i18n="nav_contact">Contact</a>
+      <button class="nav__link" onclick="toggleLanguage()" data-i18n="nav_lang_switch">العربية</button>
     </div>
   </nav>
 
@@ -84,17 +87,17 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
           <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
         </svg>
-        Streamline Your Fleet Operations
+        <span data-i18n="hero_badge">Streamline Your Fleet Operations</span>
       </span>
-      <h1 class="hero__title">
+      <h1 class="hero__title" data-i18n-html="hero_title_1,hero_title_highlight,hero_title_2">
         Automate Your <span>3PL Fleet</span> Operations
       </h1>
-      <p class="hero__description">
+      <p class="hero__description" data-i18n="hero_description">
         Intelligent timesheet reconciliation, multi-platform integration, and real-time P&L reporting for delivery fleet operators in the Middle East.
       </p>
       <div class="hero__cta">
-        <a href="#contact" class="btn btn--primary btn--lg">Get Started</a>
-        <a href="#features" class="btn btn--secondary btn--lg">Learn More</a>
+        <a href="#contact" class="btn btn--primary btn--lg" data-i18n="hero_cta_primary">Get Started</a>
+        <a href="#features" class="btn btn--secondary btn--lg" data-i18n="hero_cta_secondary">Learn More</a>
       </div>
     </div>
   </section>
@@ -103,8 +106,8 @@
   <section class="features section" id="features">
     <div class="container">
       <div class="features__header">
-        <h2 class="features__title">Everything You Need to Manage Your Fleet</h2>
-        <p>Powerful tools designed specifically for 3PL operators working with platforms like Talabat, Keeta, and more.</p>
+        <h2 class="features__title" data-i18n="features_title">Everything You Need to Manage Your Fleet</h2>
+        <p data-i18n="features_subtitle">Powerful tools designed specifically for 3PL operators working with platforms like Talabat, Keeta, and more.</p>
       </div>
 
       <div class="features__grid">
@@ -118,8 +121,8 @@
               <line x1="3" y1="10" x2="21" y2="10"/>
             </svg>
           </div>
-          <h3 class="feature-card__title">Automated Timesheet Reconciliation</h3>
-          <p class="feature-card__description">
+          <h3 class="feature-card__title" data-i18n="feature_1_title">Automated Timesheet Reconciliation</h3>
+          <p class="feature-card__description" data-i18n="feature_1_desc">
             Automatically match courier timesheets with platform data. Identify discrepancies and resolve disputes with ease.
           </p>
         </div>
@@ -131,8 +134,8 @@
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
             </svg>
           </div>
-          <h3 class="feature-card__title">Multi-Platform Integration</h3>
-          <p class="feature-card__description">
+          <h3 class="feature-card__title" data-i18n="feature_2_title">Multi-Platform Integration</h3>
+          <p class="feature-card__description" data-i18n="feature_2_desc">
             Connect with Talabat, Keeta, Mrsool, and other delivery platforms. Import data seamlessly with bulk CSV uploads.
           </p>
         </div>
@@ -145,8 +148,8 @@
               <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
             </svg>
           </div>
-          <h3 class="feature-card__title">Real-time P&L Reporting</h3>
-          <p class="feature-card__description">
+          <h3 class="feature-card__title" data-i18n="feature_3_title">Real-time P&L Reporting</h3>
+          <p class="feature-card__description" data-i18n="feature_3_desc">
             Track revenue, costs, and profitability in real-time. Make data-driven decisions with comprehensive financial insights.
           </p>
         </div>
@@ -161,8 +164,8 @@
               <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
             </svg>
           </div>
-          <h3 class="feature-card__title">Courier Payroll Management</h3>
-          <p class="feature-card__description">
+          <h3 class="feature-card__title" data-i18n="feature_4_title">Courier Payroll Management</h3>
+          <p class="feature-card__description" data-i18n="feature_4_desc">
             Calculate payroll accurately based on hours worked, deliveries made, and performance bonuses.
           </p>
         </div>
@@ -177,8 +180,8 @@
               <line x1="9" y1="15" x2="15" y2="15"/>
             </svg>
           </div>
-          <h3 class="feature-card__title">Bulk CSV Upload</h3>
-          <p class="feature-card__description">
+          <h3 class="feature-card__title" data-i18n="feature_5_title">Bulk CSV Upload</h3>
+          <p class="feature-card__description" data-i18n="feature_5_desc">
             Import hundreds of records at once. Support for all major delivery platform export formats.
           </p>
         </div>
@@ -191,8 +194,8 @@
               <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
             </svg>
           </div>
-          <h3 class="feature-card__title">Arabic & English Support</h3>
-          <p class="feature-card__description">
+          <h3 class="feature-card__title" data-i18n="feature_6_title">Arabic & English Support</h3>
+          <p class="feature-card__description" data-i18n="feature_6_desc">
             Full bilingual support with proper RTL layout. Work comfortably in your preferred language.
           </p>
         </div>
@@ -204,111 +207,111 @@
   <section class="pricing section" id="pricing">
     <div class="container">
       <div class="pricing__header">
-        <h2 class="pricing__title">Simple, Transparent Pricing</h2>
-        <p>Choose the plan that fits your fleet size. All plans include core features.</p>
+        <h2 class="pricing__title" data-i18n="pricing_title">Simple, Transparent Pricing</h2>
+        <p data-i18n="pricing_subtitle">Choose the plan that fits your fleet size. All plans include core features.</p>
       </div>
 
       <div class="pricing__grid">
         <!-- Starter Plan -->
         <div class="pricing-card">
-          <h3 class="pricing-card__name">Starter</h3>
-          <div class="pricing-card__price">$99<span>/month</span></div>
-          <p class="pricing-card__description">Perfect for small fleets getting started</p>
+          <h3 class="pricing-card__name" data-i18n="pricing_starter">Starter</h3>
+          <div class="pricing-card__price"><span data-i18n="pricing_starter_price">$99</span><span data-i18n="pricing_starter_period">/month</span></div>
+          <p class="pricing-card__description" data-i18n="pricing_starter_desc">Perfect for small fleets getting started</p>
           <ul class="pricing-card__features">
             <li>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              Up to 25 couriers
+              <span data-i18n="pricing_starter_f1">Up to 25 couriers</span>
             </li>
             <li>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              1 platform integration
+              <span data-i18n="pricing_starter_f2">1 platform integration</span>
             </li>
             <li>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              Basic reporting
+              <span data-i18n="pricing_starter_f3">Basic reporting</span>
             </li>
             <li>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              Email support
+              <span data-i18n="pricing_starter_f4">Email support</span>
             </li>
           </ul>
-          <a href="#contact" class="btn btn--secondary">Get Started</a>
+          <a href="#contact" class="btn btn--secondary" data-i18n="pricing_cta">Get Started</a>
         </div>
 
         <!-- Professional Plan -->
-        <div class="pricing-card pricing-card--featured" data-badge="Most Popular">
-          <h3 class="pricing-card__name">Professional</h3>
-          <div class="pricing-card__price">$249<span>/month</span></div>
-          <p class="pricing-card__description">For growing fleets that need more power</p>
+        <div class="pricing-card pricing-card--featured" data-badge-key="pricing_pro_badge">
+          <h3 class="pricing-card__name" data-i18n="pricing_pro">Professional</h3>
+          <div class="pricing-card__price"><span data-i18n="pricing_pro_price">$249</span><span data-i18n="pricing_pro_period">/month</span></div>
+          <p class="pricing-card__description" data-i18n="pricing_pro_desc">For growing fleets that need more power</p>
           <ul class="pricing-card__features">
             <li>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              Up to 100 couriers
+              <span data-i18n="pricing_pro_f1">Up to 100 couriers</span>
             </li>
             <li>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              All platform integrations
+              <span data-i18n="pricing_pro_f2">All platform integrations</span>
             </li>
             <li>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              Advanced P&L reports
+              <span data-i18n="pricing_pro_f3">Advanced P&L reports</span>
             </li>
             <li>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              Priority support
+              <span data-i18n="pricing_pro_f4">Priority support</span>
             </li>
           </ul>
-          <a href="#contact" class="btn btn--primary">Get Started</a>
+          <a href="#contact" class="btn btn--primary" data-i18n="pricing_cta">Get Started</a>
         </div>
 
         <!-- Enterprise Plan -->
         <div class="pricing-card">
-          <h3 class="pricing-card__name">Enterprise</h3>
-          <div class="pricing-card__price">Custom</div>
-          <p class="pricing-card__description">For large operations with custom needs</p>
+          <h3 class="pricing-card__name" data-i18n="pricing_enterprise">Enterprise</h3>
+          <div class="pricing-card__price" data-i18n="pricing_enterprise_price">Custom</div>
+          <p class="pricing-card__description" data-i18n="pricing_enterprise_desc">For large operations with custom needs</p>
           <ul class="pricing-card__features">
             <li>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              Unlimited couriers
+              <span data-i18n="pricing_enterprise_f1">Unlimited couriers</span>
             </li>
             <li>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              Custom integrations
+              <span data-i18n="pricing_enterprise_f2">Custom integrations</span>
             </li>
             <li>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              Dedicated account manager
+              <span data-i18n="pricing_enterprise_f3">Dedicated account manager</span>
             </li>
             <li>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              SLA guarantee
+              <span data-i18n="pricing_enterprise_f4">SLA guarantee</span>
             </li>
           </ul>
-          <a href="#contact" class="btn btn--secondary">Contact Sales</a>
+          <a href="#contact" class="btn btn--secondary" data-i18n="pricing_cta_enterprise">Contact Sales</a>
         </div>
       </div>
     </div>
@@ -318,26 +321,26 @@
   <section class="about section" id="about">
     <div class="container about__container">
       <div class="about__content">
-        <span class="about__badge">About Fariiq</span>
-        <h2 class="about__title">Built for 3PL Operators in the Middle East</h2>
-        <p class="about__description">
+        <span class="about__badge" data-i18n="about_badge">About Fariiq</span>
+        <h2 class="about__title" data-i18n="about_title">Built for 3PL Operators in the Middle East</h2>
+        <p class="about__description" data-i18n="about_p1">
           Fariiq was born from the real challenges faced by delivery fleet operators working with multiple platforms. We understand the complexity of managing couriers, reconciling timesheets, and tracking profitability across Talabat, Keeta, and other delivery platforms.
         </p>
-        <p class="about__description">
+        <p class="about__description" data-i18n="about_p2">
           Our mission is to simplify fleet operations so you can focus on growing your business rather than drowning in spreadsheets.
         </p>
         <div class="about__stats">
           <div class="about__stat">
-            <div class="about__stat-value">500+</div>
-            <div class="about__stat-label">Couriers Managed</div>
+            <div class="about__stat-value" data-i18n="about_stat_1_value">500+</div>
+            <div class="about__stat-label" data-i18n="about_stat_1_label">Couriers Managed</div>
           </div>
           <div class="about__stat">
-            <div class="about__stat-value">5</div>
-            <div class="about__stat-label">Platform Integrations</div>
+            <div class="about__stat-value" data-i18n="about_stat_2_value">5</div>
+            <div class="about__stat-label" data-i18n="about_stat_2_label">Platform Integrations</div>
           </div>
           <div class="about__stat">
-            <div class="about__stat-value">99.9%</div>
-            <div class="about__stat-label">Uptime</div>
+            <div class="about__stat-value" data-i18n="about_stat_3_value">99.9%</div>
+            <div class="about__stat-label" data-i18n="about_stat_3_label">Uptime</div>
           </div>
         </div>
       </div>
@@ -353,8 +356,8 @@
   <section class="contact section" id="contact">
     <div class="container contact__container">
       <div class="contact__info">
-        <h2>Get in Touch</h2>
-        <p>
+        <h2 data-i18n="contact_title">Get in Touch</h2>
+        <p data-i18n="contact_subtitle">
           Ready to streamline your fleet operations? Have questions about our platform?
           We'd love to hear from you.
         </p>
@@ -367,7 +370,7 @@
               </svg>
             </div>
             <div>
-              <div class="contact__method-text">hello@fariiq.com</div>
+              <div class="contact__method-text" data-i18n="contact_email">hello@fariiq.com</div>
             </div>
           </div>
         </div>
@@ -377,19 +380,19 @@
         <form class="contact__form" id="contact-form">
           <div class="form-group form-group--row">
             <div class="form-group">
-              <label for="contact-name">Name</label>
-              <input type="text" id="contact-name" name="name" placeholder="Your name" required>
+              <label for="contact-name" data-i18n="contact_form_name">Name</label>
+              <input type="text" id="contact-name" name="name" data-i18n-placeholder="contact_form_name_placeholder" placeholder="Your name" required>
             </div>
             <div class="form-group">
-              <label for="contact-email">Email</label>
-              <input type="email" id="contact-email" name="email" placeholder="your@email.com" required>
+              <label for="contact-email" data-i18n="contact_form_email">Email</label>
+              <input type="email" id="contact-email" name="email" data-i18n-placeholder="contact_form_email_placeholder" placeholder="your@email.com" required>
             </div>
           </div>
           <div class="form-group">
-            <label for="contact-message">Message</label>
-            <textarea id="contact-message" name="message" placeholder="How can we help you?" required></textarea>
+            <label for="contact-message" data-i18n="contact_form_message">Message</label>
+            <textarea id="contact-message" name="message" data-i18n-placeholder="contact_form_message_placeholder" placeholder="How can we help you?" required></textarea>
           </div>
-          <button type="submit" class="btn btn--primary btn--lg">Send Message</button>
+          <button type="submit" class="btn btn--primary btn--lg" data-i18n="contact_form_submit">Send Message</button>
         </form>
       </div>
     </div>
@@ -401,40 +404,40 @@
       <div class="footer__container">
         <div class="footer__brand">
           <img src="images/fariiq_dark-mode.svg" alt="Fariiq" height="40">
-          <p>Automate your 3PL fleet operations with intelligent tools designed for the Middle East market.</p>
+          <p data-i18n="footer_tagline">Automate your 3PL fleet operations with intelligent tools designed for the Middle East market.</p>
         </div>
 
         <div class="footer__column">
-          <h4>Product</h4>
+          <h4 data-i18n="footer_product">Product</h4>
           <ul class="footer__links">
-            <li><a href="#features">Features</a></li>
-            <li><a href="#pricing">Pricing</a></li>
-            <li><a href="https://app.fariiq.com">Open App</a></li>
+            <li><a href="#features" data-i18n="nav_features">Features</a></li>
+            <li><a href="#pricing" data-i18n="nav_pricing">Pricing</a></li>
+            <li><a href="https://app.fariiq.com" data-i18n="footer_open_app">Open App</a></li>
           </ul>
         </div>
 
         <div class="footer__column">
-          <h4>Company</h4>
+          <h4 data-i18n="footer_company">Company</h4>
           <ul class="footer__links">
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="#about" data-i18n="nav_about">About</a></li>
+            <li><a href="#contact" data-i18n="nav_contact">Contact</a></li>
           </ul>
         </div>
 
         <div class="footer__column">
-          <h4>Language</h4>
+          <h4 data-i18n="footer_language">Language</h4>
           <ul class="footer__links">
-            <li><a href="/">English</a></li>
-            <li><a href="ar/">العربية</a></li>
+            <li><a href="#" onclick="setLanguage('en'); return false;">English</a></li>
+            <li><a href="#" onclick="setLanguage('ar'); return false;">العربية</a></li>
           </ul>
         </div>
       </div>
 
       <div class="footer__bottom">
-        <p class="footer__copyright">&copy; 2026 Fariiq. All rights reserved.</p>
+        <p class="footer__copyright" data-i18n="footer_copyright">&copy; 2026 Fariiq. All rights reserved.</p>
         <div class="footer__legal">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
+          <a href="#" data-i18n="footer_privacy">Privacy Policy</a>
+          <a href="#" data-i18n="footer_terms">Terms of Service</a>
         </div>
       </div>
     </div>
