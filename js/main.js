@@ -104,12 +104,21 @@
     submitBtn.innerHTML = '<span class="spinner"></span>';
 
     try {
-      // For now, just simulate a submission
-      // Replace with actual API endpoint
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Submit to Formspree
+      const response = await fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
 
-      alert(t('form_success'));
-      form.reset();
+      if (response.ok) {
+        alert(t('form_success'));
+        form.reset();
+      } else {
+        throw new Error('Form submission failed');
+      }
     } catch (error) {
       console.error('Contact form error:', error);
       alert(t('form_error'));

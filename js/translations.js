@@ -107,7 +107,7 @@ const translations = {
       "nav_lang_switch": "English",
       "hero_badge": "تبسيط عمليات أسطولك",
       "hero_title_1": "أتمتة ",
-      "hero_title_highlight": "إدارة أسطولك ",
+"hero_title_highlight": "إدارة أسطولك",
       "hero_title_2": "اللوجستي",
       "hero_description": "مطابقة الجداول الزمنية الذكية، والتكامل متعدد المنصات، وتقارير الربح والخسارة في الوقت الفعلي لمشغلي أساطيل التوصيل في الشرق الأوسط.",
       "hero_cta_primary": "ابدأ الآن",
