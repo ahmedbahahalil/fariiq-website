@@ -13,7 +13,7 @@
     // Update this to your actual API URL
     apiBaseUrl: '/api/v1',
     // Flutter app URL
-    appUrl: '/app',
+    appUrl: 'https://app.fariiq.com',
   };
 
   // ========================================
