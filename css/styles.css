@@ -757,52 +757,36 @@ p {
 }
 
 /* Tier Color Variants */
-.pricing__tier--silver {
+.pricing__tier--starter {
   border-color: #A0AEC0;
 }
 
-.pricing__tier--silver .pricing__tier-name {
+.pricing__tier--starter .pricing__tier-name {
   color: #718096;
 }
 
-.pricing__tier--silver .pricing__tier-amount {
-  color: #718096;
+.pricing__tier--growth {
+  border-color: #48BB78;
 }
 
-.pricing__tier--gold {
-  border-color: #D69E2E;
+.pricing__tier--growth .pricing__tier-name {
+  color: #38A169;
 }
 
-.pricing__tier--gold .pricing__tier-name {
-  color: #B7791F;
-}
-
-.pricing__tier--gold .pricing__tier-amount {
-  color: #B7791F;
-}
-
-.pricing__tier--platinum {
+.pricing__tier--scale {
   border-color: var(--color-primary);
   box-shadow: var(--shadow-lg);
 }
 
-.pricing__tier--platinum .pricing__tier-name {
+.pricing__tier--scale .pricing__tier-name {
   color: var(--color-primary);
 }
 
-.pricing__tier--platinum .pricing__tier-amount {
-  color: var(--color-primary);
-}
-
-.pricing__tier--diamond {
+.pricing__tier--enterprise {
   border-color: #667EEA;
 }
 
-.pricing__tier--diamond .pricing__tier-name {
-  color: #5A67D8;
-}
-
-.pricing__tier--diamond .pricing__tier-amount {
+.pricing__tier--enterprise .pricing__tier-name {
   color: #5A67D8;
 }
 
@@ -1020,6 +1004,35 @@ p {
   color: var(--color-text-secondary);
 }
 
+/* Benefits */
+.pricing__benefits {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-12);
+  padding: var(--spacing-6);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  max-width: 800px;
+  margin-inline: auto;
+}
+
+.pricing__benefit {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.pricing__benefit svg {
+  width: 20px;
+  height: 20px;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
 /* CTA */
 .pricing__cta {
   text-align: center;
@@ -1101,6 +1114,13 @@ p {
 .about__stat-value {
   font-size: var(--font-size-3xl);
   font-weight: 700;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+}
+
+.about__stat-value svg {
   color: var(--color-primary);
 }
 
