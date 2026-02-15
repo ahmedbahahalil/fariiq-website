@@ -193,6 +193,17 @@
       });
     });
 
+    // Nav items
+    document.querySelectorAll('a.nav__link[href^="#"]').forEach(link => {
+      link.addEventListener('click', function() {
+        gtag('event', 'nav_click', {
+          event_category: 'navigation',
+          event_label: this.textContent.trim(),
+          nav_section: this.getAttribute('href')
+        });
+      });
+    });
+
     // Login button
     document.querySelectorAll('a[href="https://app.fariiq.com"]').forEach(btn => {
       btn.addEventListener('click', function() {
