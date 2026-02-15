@@ -243,8 +243,17 @@ function getCurrentLanguage() {
 function setLanguage(lang) {
   if (!translations[lang]) return;
 
+  const previousLang = getCurrentLanguage();
   localStorage.setItem('fariiq_lang', lang);
   applyTranslations();
+
+  if (previousLang !== lang && typeof gtag === 'function') {
+    gtag('event', 'language_switch', {
+      event_category: 'engagement',
+      previous_language: previousLang,
+      new_language: lang
+    });
+  }
 }
 
 // Toggle between languages

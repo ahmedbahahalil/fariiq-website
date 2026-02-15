@@ -114,12 +114,31 @@
       });
 
       if (response.ok) {
+        gtag('event', 'form_submit', {
+          event_category: 'contact',
+          event_label: 'Contact Form',
+          form_status: 'success'
+        });
         alert(t('form_success'));
         form.reset();
       } else {
+        gtag('event', 'form_submit', {
+          event_category: 'contact',
+          event_label: 'Contact Form',
+          form_status: 'failure',
+          error_type: 'server_error'
+        });
         throw new Error('Form submission failed');
       }
     } catch (error) {
+      if (error.message !== 'Form submission failed') {
+        gtag('event', 'form_submit', {
+          event_category: 'contact',
+          event_label: 'Contact Form',
+          form_status: 'failure',
+          error_type: 'network_error'
+        });
+      }
       console.error('Contact form error:', error);
       alert(t('form_error'));
     } finally {
@@ -161,12 +180,39 @@
   }
 
   // ========================================
+  // Analytics: CTA Click Tracking
+  // ========================================
+  function initCTATracking() {
+    document.querySelectorAll('.hero__cta .btn, .pricing__cta .btn, .pricing-card .btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        gtag('event', 'cta_click', {
+          event_category: 'engagement',
+          event_label: this.textContent.trim(),
+          cta_url: this.getAttribute('href')
+        });
+      });
+    });
+
+    // Login button
+    document.querySelectorAll('a[href="https://app.fariiq.com"]').forEach(btn => {
+      btn.addEventListener('click', function() {
+        gtag('event', 'cta_click', {
+          event_category: 'engagement',
+          event_label: 'Login',
+          cta_url: this.getAttribute('href')
+        });
+      });
+    });
+  }
+
+  // ========================================
   // Initialize
   // ========================================
   function init() {
     initNavigation();
     initContactForm();
     initAnimations();
+    initCTATracking();
   }
 
   // Run on DOM ready
