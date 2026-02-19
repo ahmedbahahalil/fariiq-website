@@ -107,7 +107,8 @@ const translations = {
       "form_required": "Please fill in all required fields.",
       "form_invalid_email": "Please enter a valid email address.",
       "form_success": "Thank you! Your message has been sent. We'll get back to you soon.",
-      "form_error": "Sorry, there was an error sending your message. Please try again."
+      "form_error": "Sorry, there was an error sending your message. Please try again.",
+      "form_rate_limit": "You've sent too many messages. Please try again later."
   },
 
   ar: {
@@ -213,7 +214,8 @@ const translations = {
       "form_required": "يرجى ملء جميع الحقول المطلوبة.",
       "form_invalid_email": "يرجى إدخال عنوان بريد إلكتروني صالح.",
       "form_success": "شكراً لك! تم إرسال رسالتك. سنتواصل معك قريباً.",
-      "form_error": "عذراً، حدث خطأ أثناء إرسال رسالتك. يرجى المحاولة مرة أخرى."
+      "form_error": "عذراً، حدث خطأ أثناء إرسال رسالتك. يرجى المحاولة مرة أخرى.",
+      "form_rate_limit": "لقد أرسلت عدداً كبيراً من الرسائل. يرجى المحاولة لاحقاً."
   }
 };
 

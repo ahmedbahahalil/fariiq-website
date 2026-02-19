@@ -104,13 +104,12 @@
     submitBtn.innerHTML = '<span class="spinner"></span>';
 
     try {
-      // Submit to Formspree
-      const response = await fetch(form.action, {
+      const response = await fetch('https://api.fariiq.com/v2/contact', {
         method: 'POST',
-        body: formData,
         headers: {
-          'Accept': 'application/json'
-        }
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name, email, message })
       });
 
       if (response.ok) {
@@ -121,6 +120,14 @@
         });
         alert(t('form_success'));
         form.reset();
+      } else if (response.status === 429) {
+        gtag('event', 'form_submit', {
+          event_category: 'contact',
+          event_label: 'Contact Form',
+          form_status: 'failure',
+          error_type: 'rate_limited'
+        });
+        alert(t('form_rate_limit'));
       } else {
         gtag('event', 'form_submit', {
           event_category: 'contact',
