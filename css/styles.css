@@ -550,6 +550,90 @@ p {
 }
 
 /* ========================================
+   Portals Section
+   ======================================== */
+.portals {
+  background: var(--gradient-hero);
+}
+
+.portals__header {
+  text-align: center;
+  max-width: 600px;
+  margin-inline: auto;
+  margin-bottom: var(--spacing-12);
+}
+
+.portals__title {
+  margin-bottom: var(--spacing-4);
+}
+
+.portals__grid {
+  display: grid;
+  gap: var(--spacing-6);
+}
+
+@media (min-width: 768px) {
+  .portals__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.portal-card {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-8);
+  text-align: center;
+  transition: all var(--transition-base);
+  border: 2px solid transparent;
+}
+
+.portal-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.portal-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-xl);
+  margin: 0 auto var(--spacing-4);
+}
+
+.portal-card__icon svg {
+  width: 32px;
+  height: 32px;
+  color: var(--color-text-inverse);
+}
+
+.portal-card__title {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--spacing-2);
+}
+
+.portal-card__description {
+  font-size: var(--font-size-sm);
+}
+
+.portal-card--admin {
+  border-color: var(--color-primary);
+}
+
+.portal-card--admin .portal-card__icon {
+  background: var(--gradient-primary);
+}
+
+.portal-card--employee .portal-card__icon {
+  background: linear-gradient(135deg, #48BB78 0%, #38A169 100%);
+}
+
+.portal-card--courier .portal-card__icon {
+  background: linear-gradient(135deg, #667EEA 0%, #5A67D8 100%);
+}
+
+/* ========================================
    Pricing Section
    ======================================== */
 .pricing {
@@ -1500,7 +1584,12 @@ p {
 
 [dir="rtl"] .hero__container,
 [dir="rtl"] .features__header,
+[dir="rtl"] .portals__header,
 [dir="rtl"] .pricing__header {
+  text-align: center;
+}
+
+[dir="rtl"] .portal-card {
   text-align: center;
 }
 
