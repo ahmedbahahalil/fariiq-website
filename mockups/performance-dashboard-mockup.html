@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Performance Dashboard - Mockup</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f6fa; color: #2d3436; }
+
+  .header { background: #1a1a2e; color: white; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+  .header h1 { font-size: 18px; font-weight: 600; }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .date-picker { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 14px; border-radius: 8px; font-size: 13px; }
+  .company-badge { background: #6c5ce7; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+
+  .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+  /* Fariiq Score Banner */
+  .score-banner { background: linear-gradient(135deg, #6c5ce7, #a855f7); border-radius: 16px; padding: 28px 32px; color: white; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; }
+  .score-left h2 { font-size: 14px; font-weight: 500; opacity: 0.85; margin-bottom: 4px; }
+  .score-left .score-value { font-size: 48px; font-weight: 700; }
+  .score-left .score-value span { font-size: 20px; opacity: 0.7; }
+  .score-left .score-change { font-size: 13px; margin-top: 4px; }
+  .score-left .score-change.up { color: #55efc4; }
+  .score-breakdown { display: flex; gap: 32px; }
+  .score-breakdown-item { text-align: center; }
+  .score-breakdown-item .label { font-size: 11px; opacity: 0.7; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .score-breakdown-item .value { font-size: 22px; font-weight: 700; }
+  .score-breakdown-item .sub { font-size: 11px; opacity: 0.6; margin-top: 2px; }
+
+  /* KPI Cards */
+  .section-title { font-size: 15px; font-weight: 600; margin-bottom: 14px; color: #636e72; text-transform: uppercase; letter-spacing: 0.5px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+  .kpi-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .kpi-card .kpi-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; }
+  .kpi-card .kpi-label { font-size: 13px; color: #636e72; font-weight: 500; }
+  .kpi-card .kpi-badge { font-size: 11px; padding: 3px 8px; border-radius: 10px; font-weight: 600; }
+  .kpi-badge.green { background: #e6fff5; color: #00b894; }
+  .kpi-badge.red { background: #fff0f0; color: #d63031; }
+  .kpi-badge.yellow { background: #fff8e6; color: #e17055; }
+  .kpi-card .kpi-value { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .kpi-card .kpi-target { font-size: 12px; color: #b2bec3; }
+  .kpi-card .kpi-target span { color: #636e72; font-weight: 600; }
+  /* Mini bar chart inside KPI */
+  .kpi-bars { display: flex; align-items: end; gap: 3px; height: 32px; margin-top: 10px; }
+  .kpi-bars .bar { flex: 1; border-radius: 2px 2px 0 0; min-width: 4px; }
+
+  /* Platform Breakdown Table */
+  .platform-section { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 24px; }
+  .platform-section h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .platform-section .subtitle { font-size: 12px; color: #b2bec3; margin-bottom: 18px; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 11px; color: #b2bec3; text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 14px; border-bottom: 1px solid #f0f0f0; font-weight: 600; }
+  td { padding: 14px; border-bottom: 1px solid #f8f8f8; font-size: 13px; }
+  .platform-name { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+  .platform-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .platform-dot.talabat { background: #ff6b00; }
+  .platform-dot.marsool { background: #2ecc71; }
+  .platform-dot.jahez { background: #9b59b6; }
+  .platform-dot.hungerstation { background: #e74c3c; }
+  .metric-cell { font-weight: 500; }
+  .metric-cell.good { color: #00b894; }
+  .metric-cell.warn { color: #e17055; }
+  .metric-cell.bad { color: #d63031; }
+  .metric-cell .raw { display: block; font-size: 10px; color: #b2bec3; font-weight: 400; margin-top: 2px; }
+  .trend-spark { display: inline-flex; align-items: center; gap: 4px; }
+  .trend-spark svg { width: 50px; height: 20px; }
+
+  /* How it's calculated tooltip */
+  .info-icon { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: #f0f0f0; color: #b2bec3; font-size: 10px; cursor: help; position: relative; margin-left: 4px; }
+  .info-icon:hover .tooltip { display: block; }
+  .tooltip { display: none; position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); background: #2d3436; color: white; padding: 10px 14px; border-radius: 8px; font-size: 11px; width: 260px; line-height: 1.5; z-index: 10; white-space: normal; font-weight: 400; }
+  .tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: #2d3436; }
+  .tooltip .platform-rule { margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.15); }
+  .tooltip .platform-rule .pname { color: #dfe6e9; font-weight: 600; }
+
+  /* Alerts */
+  .alerts-section { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 24px; }
+  .alert-item { display: flex; align-items: start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f8f8f8; }
+  .alert-item:last-child { border-bottom: none; }
+  .alert-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .alert-icon.warning { background: #fff3e0; }
+  .alert-icon.critical { background: #ffebee; }
+  .alert-icon.info { background: #e3f2fd; }
+  .alert-text { font-size: 13px; line-height: 1.5; }
+  .alert-text strong { font-weight: 600; }
+  .alert-meta { font-size: 11px; color: #b2bec3; margin-top: 4px; }
+
+  /* Bottom grid */
+  .bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .chart-placeholder { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .chart-placeholder h3 { font-size: 15px; font-weight: 600; margin-bottom: 16px; }
+
+  /* Trend chart mock */
+  .trend-chart { height: 180px; display: flex; align-items: end; gap: 8px; padding-top: 20px; position: relative; }
+  .trend-chart .y-axis { position: absolute; top: 0; left: 0; bottom: 0; width: 40px; display: flex; flex-direction: column; justify-content: space-between; }
+  .trend-chart .y-axis span { font-size: 10px; color: #b2bec3; }
+  .trend-day { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .trend-day .bar-group { flex: 1; width: 100%; display: flex; align-items: end; justify-content: center; gap: 2px; }
+  .trend-day .bar-group .tbar { width: 8px; border-radius: 2px 2px 0 0; }
+  .trend-day .day-label { font-size: 10px; color: #b2bec3; }
+
+  /* Zone heatmap mock */
+  .zone-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .zone-cell { padding: 14px 10px; border-radius: 8px; text-align: center; }
+  .zone-cell .zone-name { font-size: 11px; font-weight: 600; margin-bottom: 4px; }
+  .zone-cell .zone-val { font-size: 18px; font-weight: 700; }
+  .zone-cell .zone-sub { font-size: 10px; opacity: 0.7; margin-top: 2px; }
+  .zone-hot { background: #ff7675; color: white; }
+  .zone-warm { background: #fdcb6e; color: #2d3436; }
+  .zone-cool { background: #81ecec; color: #2d3436; }
+  .zone-cold { background: #74b9ff; color: #2d3436; }
+  .zone-ok { background: #55efc4; color: #2d3436; }
+
+  /* Legend */
+  .legend { display: flex; gap: 16px; margin-bottom: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #636e72; }
+  .legend-item .ldot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* Watermark */
+  .watermark { text-align: center; padding: 24px; color: #b2bec3; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Daily Performance</h1>
+  <div class="header-right">
+    <input type="date" class="date-picker" value="2026-02-25">
+    <div class="company-badge">Al-Rashed Logistics</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Fariiq Overall Score -->
+  <div class="score-banner">
+    <div class="score-left">
+      <h2>Fariiq Performance Score</h2>
+      <div class="score-value">84.2 <span>/ 100</span></div>
+      <div class="score-change up">+2.1 from yesterday</div>
+    </div>
+    <div class="score-breakdown">
+      <div class="score-breakdown-item">
+        <div class="label">Total Orders</div>
+        <div class="value">1,847</div>
+        <div class="sub">across 4 platforms</div>
+      </div>
+      <div class="score-breakdown-item">
+        <div class="label">Delivered</div>
+        <div class="value">1,712</div>
+        <div class="sub">92.7% success</div>
+      </div>
+      <div class="score-breakdown-item">
+        <div class="label">Avg Time</div>
+        <div class="value">28m</div>
+        <div class="sub">target: 30m</div>
+      </div>
+      <div class="score-breakdown-item">
+        <div class="label">Avg Rating</div>
+        <div class="value">4.6</div>
+        <div class="sub">across platforms</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unified KPI Cards -->
+  <div class="section-title">Fariiq Unified KPIs</div>
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <div class="kpi-label">
+          Delivery Success Rate
+          <span class="info-icon">?
+            <div class="tooltip">
+              <strong>How Fariiq calculates this:</strong><br>
+              Completed deliveries / Total assigned orders (excl. customer cancellations)
+              <div class="platform-rule"><span class="pname">Talabat:</span> delivered_count / (total - cancelled_by_customer)</div>
+              <div class="platform-rule"><span class="pname">Marsool:</span> completion_rate column (already excludes cancellations)</div>
+              <div class="platform-rule"><span class="pname">Jahez:</span> (total - failed - returned) / total</div>
+            </div>
+          </span>
+        </div>
+        <span class="kpi-badge green">On Target</span>
+      </div>
+      <div class="kpi-value">92.7%</div>
+      <div class="kpi-target">Target: <span>90%</span></div>
+      <div class="kpi-bars">
+        <div class="bar" style="height:78%; background:#ff6b00;" title="Talabat 94.2%"></div>
+        <div class="bar" style="height:65%; background:#2ecc71;" title="Marsool 91.8%"></div>
+        <div class="bar" style="height:55%; background:#9b59b6;" title="Jahez 90.1%"></div>
+        <div class="bar" style="height:50%; background:#e74c3c;" title="HungerStation 88.3%"></div>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <div class="kpi-label">
+          Avg Delivery Time
+          <span class="info-icon">?
+            <div class="tooltip">
+              <strong>How Fariiq calculates this:</strong><br>
+              Time from order acceptance to delivery confirmation (minutes)
+              <div class="platform-rule"><span class="pname">Talabat:</span> avg_delivery_duration column</div>
+              <div class="platform-rule"><span class="pname">Marsool:</span> delivered_at - accepted_at (computed)</div>
+              <div class="platform-rule"><span class="pname">Jahez:</span> avg_time_mins column</div>
+            </div>
+          </span>
+        </div>
+        <span class="kpi-badge green">On Target</span>
+      </div>
+      <div class="kpi-value">28 min</div>
+      <div class="kpi-target">Target: <span>30 min</span></div>
+      <div class="kpi-bars">
+        <div class="bar" style="height:60%; background:#ff6b00;" title="Talabat 26m"></div>
+        <div class="bar" style="height:70%; background:#2ecc71;" title="Marsool 29m"></div>
+        <div class="bar" style="height:75%; background:#9b59b6;" title="Jahez 30m"></div>
+        <div class="bar" style="height:65%; background:#e74c3c;" title="HungerStation 27m"></div>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <div class="kpi-label">
+          Customer Rating
+          <span class="info-icon">?
+            <div class="tooltip">
+              <strong>How Fariiq calculates this:</strong><br>
+              Weighted average by order volume (not simple average)
+              <div class="platform-rule"><span class="pname">Talabat:</span> rider_rating (5-star scale)</div>
+              <div class="platform-rule"><span class="pname">Marsool:</span> satisfaction_score (converted from 10 to 5 scale)</div>
+              <div class="platform-rule"><span class="pname">Jahez:</span> customer_rating (5-star scale)</div>
+            </div>
+          </span>
+        </div>
+        <span class="kpi-badge yellow">Below Target</span>
+      </div>
+      <div class="kpi-value">4.6</div>
+      <div class="kpi-target">Target: <span>4.7</span></div>
+      <div class="kpi-bars">
+        <div class="bar" style="height:85%; background:#ff6b00;" title="Talabat 4.7"></div>
+        <div class="bar" style="height:70%; background:#2ecc71;" title="Marsool 4.5"></div>
+        <div class="bar" style="height:60%; background:#9b59b6;" title="Jahez 4.4"></div>
+        <div class="bar" style="height:75%; background:#e74c3c;" title="HungerStation 4.6"></div>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <div class="kpi-label">
+          Acceptance Rate
+          <span class="info-icon">?
+            <div class="tooltip">
+              <strong>How Fariiq calculates this:</strong><br>
+              Orders accepted / Orders offered to couriers
+              <div class="platform-rule"><span class="pname">Talabat:</span> acceptance_rate column</div>
+              <div class="platform-rule"><span class="pname">Marsool:</span> accepted / total_offered (computed)</div>
+              <div class="platform-rule"><span class="pname">Jahez:</span> Not available - excluded from this KPI</div>
+            </div>
+          </span>
+        </div>
+        <span class="kpi-badge red">Critical</span>
+      </div>
+      <div class="kpi-value">78.4%</div>
+      <div class="kpi-target">Target: <span>85%</span></div>
+      <div class="kpi-bars">
+        <div class="bar" style="height:70%; background:#ff6b00;" title="Talabat 82.1%"></div>
+        <div class="bar" style="height:50%; background:#2ecc71;" title="Marsool 74.6%"></div>
+        <div class="bar" style="height:0%; background:#9b59b6;" title="Jahez N/A"></div>
+        <div class="bar" style="height:55%; background:#e74c3c;" title="HungerStation 76.2%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Platform Breakdown Table -->
+  <div class="platform-section">
+    <h3>Platform Breakdown</h3>
+    <div class="subtitle">How Fariiq KPIs break down per platform, with the original metric name shown below each value</div>
+    <div class="legend">
+      <div class="legend-item"><div class="ldot" style="background:#ff6b00"></div>Talabat</div>
+      <div class="legend-item"><div class="ldot" style="background:#2ecc71"></div>Marsool</div>
+      <div class="legend-item"><div class="ldot" style="background:#9b59b6"></div>Jahez</div>
+      <div class="legend-item"><div class="ldot" style="background:#e74c3c"></div>HungerStation</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Platform</th>
+          <th>Orders</th>
+          <th>Success Rate</th>
+          <th>Avg Time</th>
+          <th>Rating</th>
+          <th>Acceptance</th>
+          <th>Data Source</th>
+          <th>Last Updated</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="platform-name"><div class="platform-dot talabat"></div>Talabat</div></td>
+          <td class="metric-cell">782</td>
+          <td class="metric-cell good">94.2%<span class="raw">from: delivered_count / total</span></td>
+          <td class="metric-cell good">26m<span class="raw">from: avg_delivery_duration</span></td>
+          <td class="metric-cell good">4.7<span class="raw">from: rider_rating</span></td>
+          <td class="metric-cell warn">82.1%<span class="raw">from: acceptance_rate</span></td>
+          <td style="font-size:11px; color:#636e72;">Tableau Export</td>
+          <td style="font-size:11px; color:#b2bec3;">Today, 08:15 AM</td>
+        </tr>
+        <tr>
+          <td><div class="platform-name"><div class="platform-dot marsool"></div>Marsool</div></td>
+          <td class="metric-cell">524</td>
+          <td class="metric-cell good">91.8%<span class="raw">from: completion_rate</span></td>
+          <td class="metric-cell warn">29m<span class="raw">computed: delivered_at - accepted_at</span></td>
+          <td class="metric-cell warn">4.5<span class="raw">from: satisfaction_score (÷2)</span></td>
+          <td class="metric-cell bad">74.6%<span class="raw">computed: accepted / total_offered</span></td>
+          <td style="font-size:11px; color:#636e72;">CSV Upload</td>
+          <td style="font-size:11px; color:#b2bec3;">Today, 09:30 AM</td>
+        </tr>
+        <tr>
+          <td><div class="platform-name"><div class="platform-dot jahez"></div>Jahez</div></td>
+          <td class="metric-cell">312</td>
+          <td class="metric-cell good">90.1%<span class="raw">computed: (total - failed - returned) / total</span></td>
+          <td class="metric-cell warn">30m<span class="raw">from: avg_time_mins</span></td>
+          <td class="metric-cell warn">4.4<span class="raw">from: customer_rating</span></td>
+          <td class="metric-cell" style="color:#b2bec3;">N/A<span class="raw">metric not available</span></td>
+          <td style="font-size:11px; color:#636e72;">Excel Upload</td>
+          <td style="font-size:11px; color:#b2bec3;">Today, 07:45 AM</td>
+        </tr>
+        <tr>
+          <td><div class="platform-name"><div class="platform-dot hungerstation"></div>HungerStation</div></td>
+          <td class="metric-cell">229</td>
+          <td class="metric-cell warn">88.3%<span class="raw">from: success_percentage</span></td>
+          <td class="metric-cell good">27m<span class="raw">from: avg_mins_to_deliver</span></td>
+          <td class="metric-cell good">4.6<span class="raw">from: driver_stars</span></td>
+          <td class="metric-cell bad">76.2%<span class="raw">from: accept_pct</span></td>
+          <td style="font-size:11px; color:#636e72;">CSV Upload</td>
+          <td style="font-size:11px; color:#b2bec3;">Today, 10:00 AM</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Alerts -->
+  <div class="alerts-section">
+    <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 14px;">Insights & Alerts</h3>
+    <div class="alert-item">
+      <div class="alert-icon critical">&#9888;</div>
+      <div>
+        <div class="alert-text"><strong>Acceptance rate below target</strong> across all platforms. Marsool is lowest at 74.6% (target: 85%). This typically indicates courier availability issues.</div>
+        <div class="alert-meta">Triggered at 10:15 AM &middot; Affects 3 of 4 platforms</div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="alert-icon warning">&#9888;</div>
+      <div>
+        <div class="alert-text"><strong>HungerStation success rate</strong> dropped to 88.3%, down from 91.5% yesterday. Investigate Zone 4 (Industrial) where 60% of failures occurred.</div>
+        <div class="alert-meta">Triggered at 09:45 AM &middot; HungerStation only</div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="alert-icon info">&#x2139;</div>
+      <div>
+        <div class="alert-text"><strong>Talabat data</strong> is from Tableau export (8:15 AM). Next scheduled refresh: 2:00 PM. Other platform files uploaded manually today.</div>
+        <div class="alert-meta">Data freshness notice</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom: Trend + Zone -->
+  <div class="bottom-grid">
+    <div class="chart-placeholder">
+      <h3>7-Day Delivery Success Trend</h3>
+      <div class="legend" style="margin-top:8px;">
+        <div class="legend-item"><div class="ldot" style="background:#ff6b00"></div>Talabat</div>
+        <div class="legend-item"><div class="ldot" style="background:#2ecc71"></div>Marsool</div>
+        <div class="legend-item"><div class="ldot" style="background:#9b59b6"></div>Jahez</div>
+        <div class="legend-item"><div class="ldot" style="background:#e74c3c"></div>HungerStation</div>
+      </div>
+      <div class="trend-chart">
+        <div class="trend-day">
+          <div class="bar-group">
+            <div class="tbar" style="height:82%; background:#ff6b00;"></div>
+            <div class="tbar" style="height:75%; background:#2ecc71;"></div>
+            <div class="tbar" style="height:70%; background:#9b59b6;"></div>
+            <div class="tbar" style="height:68%; background:#e74c3c;"></div>
+          </div>
+          <div class="day-label">Wed</div>
+        </div>
+        <div class="trend-day">
+          <div class="bar-group">
+            <div class="tbar" style="height:85%; background:#ff6b00;"></div>
+            <div class="tbar" style="height:78%; background:#2ecc71;"></div>
+            <div class="tbar" style="height:72%; background:#9b59b6;"></div>
+            <div class="tbar" style="height:70%; background:#e74c3c;"></div>
+          </div>
+          <div class="day-label">Thu</div>
+        </div>
+        <div class="trend-day">
+          <div class="bar-group">
+            <div class="tbar" style="height:80%; background:#ff6b00;"></div>
+            <div class="tbar" style="height:72%; background:#2ecc71;"></div>
+            <div class="tbar" style="height:68%; background:#9b59b6;"></div>
+            <div class="tbar" style="height:65%; background:#e74c3c;"></div>
+          </div>
+          <div class="day-label">Fri</div>
+        </div>
+        <div class="trend-day">
+          <div class="bar-group">
+            <div class="tbar" style="height:78%; background:#ff6b00;"></div>
+            <div class="tbar" style="height:70%; background:#2ecc71;"></div>
+            <div class="tbar" style="height:65%; background:#9b59b6;"></div>
+            <div class="tbar" style="height:62%; background:#e74c3c;"></div>
+          </div>
+          <div class="day-label">Sat</div>
+        </div>
+        <div class="trend-day">
+          <div class="bar-group">
+            <div class="tbar" style="height:88%; background:#ff6b00;"></div>
+            <div class="tbar" style="height:80%; background:#2ecc71;"></div>
+            <div class="tbar" style="height:75%; background:#9b59b6;"></div>
+            <div class="tbar" style="height:72%; background:#e74c3c;"></div>
+          </div>
+          <div class="day-label">Sun</div>
+        </div>
+        <div class="trend-day">
+          <div class="bar-group">
+            <div class="tbar" style="height:90%; background:#ff6b00;"></div>
+            <div class="tbar" style="height:82%; background:#2ecc71;"></div>
+            <div class="tbar" style="height:78%; background:#9b59b6;"></div>
+            <div class="tbar" style="height:73%; background:#e74c3c;"></div>
+          </div>
+          <div class="day-label">Mon</div>
+        </div>
+        <div class="trend-day" style="background: rgba(108,92,231,0.05); border-radius: 8px; padding: 4px;">
+          <div class="bar-group">
+            <div class="tbar" style="height:92%; background:#ff6b00;"></div>
+            <div class="tbar" style="height:84%; background:#2ecc71;"></div>
+            <div class="tbar" style="height:80%; background:#9b59b6;"></div>
+            <div class="tbar" style="height:70%; background:#e74c3c;"></div>
+          </div>
+          <div class="day-label" style="font-weight:700; color:#6c5ce7;">Today</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-placeholder">
+      <h3>Performance by Zone</h3>
+      <p style="font-size:12px; color:#b2bec3; margin-bottom:16px;">Delivery success rate by zone (all platforms combined)</p>
+      <div class="zone-grid">
+        <div class="zone-cell zone-ok">
+          <div class="zone-name">Zone 1 - Central</div>
+          <div class="zone-val">96.2%</div>
+          <div class="zone-sub">412 orders</div>
+        </div>
+        <div class="zone-cell zone-ok">
+          <div class="zone-name">Zone 2 - North</div>
+          <div class="zone-val">94.8%</div>
+          <div class="zone-sub">328 orders</div>
+        </div>
+        <div class="zone-cell zone-cool">
+          <div class="zone-name">Zone 3 - South</div>
+          <div class="zone-val">91.1%</div>
+          <div class="zone-sub">289 orders</div>
+        </div>
+        <div class="zone-cell zone-hot">
+          <div class="zone-name">Zone 4 - Industrial</div>
+          <div class="zone-val">82.4%</div>
+          <div class="zone-sub">187 orders</div>
+        </div>
+        <div class="zone-cell zone-cool">
+          <div class="zone-name">Zone 5 - East</div>
+          <div class="zone-val">93.5%</div>
+          <div class="zone-sub">251 orders</div>
+        </div>
+        <div class="zone-cell zone-warm">
+          <div class="zone-name">Zone 6 - West</div>
+          <div class="zone-val">88.9%</div>
+          <div class="zone-sub">198 orders</div>
+        </div>
+        <div class="zone-cell zone-ok">
+          <div class="zone-name">Zone 7 - Airport</div>
+          <div class="zone-val">95.1%</div>
+          <div class="zone-sub">102 orders</div>
+        </div>
+        <div class="zone-cell zone-cool">
+          <div class="zone-name">Zone 8 - Suburbs</div>
+          <div class="zone-val">90.7%</div>
+          <div class="zone-sub">80 orders</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="watermark">Mockup - Fariiq Daily Performance Dashboard</div>
+</div>
+
+</body>
+</html>

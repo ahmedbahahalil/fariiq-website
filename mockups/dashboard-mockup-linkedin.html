@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fariiq Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Noto Sans', sans-serif;
+    background: #FDF8F0;
+    color: #3D4552;
+    overflow: hidden;
+  }
+
+  .container {
+    display: flex;
+    width: 1280px;
+    height: 800px;
+    position: relative;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 64px;
+    background: #FFFFFF;
+    border-right: 1px solid #E5DDD0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 0;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-logo {
+    width: 36px;
+    height: 36px;
+    background: #B8996F;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  .sidebar-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6B7280;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.15s;
+  }
+
+  .sidebar-icon.active {
+    background: #F5EDE0;
+    color: #B8996F;
+  }
+
+  .sidebar-icon:hover {
+    background: #F9F4EC;
+  }
+
+  /* Sub-panel */
+  .sub-panel {
+    width: 200px;
+    background: #FFFFFF;
+    border-right: 1px solid #E5DDD0;
+    padding: 20px 12px;
+    flex-shrink: 0;
+  }
+
+  .sub-panel-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #9CA3AF;
+    padding: 0 8px;
+    margin-bottom: 12px;
+  }
+
+  .sub-panel-item {
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #5F6B7C;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.15s;
+  }
+
+  .sub-panel-item.active {
+    background: #F5EDE0;
+    color: #B8996F;
+    font-weight: 600;
+  }
+
+  .sub-panel-item:hover {
+    background: #F9F4EC;
+  }
+
+  .sub-panel-item svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  /* Main content */
+  .main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 28px;
+  }
+
+  /* App Bar */
+  .app-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .app-bar-left {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .greeting {
+    font-size: 22px;
+    font-weight: 700;
+    color: #3D4552;
+  }
+
+  .greeting-sub {
+    font-size: 13px;
+    color: #6B7280;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #F0FDF4;
+    color: #16A34A;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid #BBF7D0;
+  }
+
+  .status-badge.warning {
+    background: #FFFBEB;
+    color: #D97706;
+    border-color: #FDE68A;
+  }
+
+  .app-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #B8996F;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid #E5DDD0;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6B7280;
+    cursor: pointer;
+    font-size: 18px;
+  }
+
+  /* Featured Cards */
+  .featured-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .featured-card {
+    background: #FFFFFF;
+    border: 1px solid #E5DDD0;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .featured-card-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .featured-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6B7280;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .featured-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .featured-icon.inflow {
+    background: #F0FDF4;
+    color: #16A34A;
+  }
+
+  .featured-icon.outflow {
+    background: #FEF2F2;
+    color: #DC2626;
+  }
+
+  .featured-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #3D4552;
+    margin-top: 4px;
+  }
+
+  .featured-sub {
+    font-size: 12px;
+    color: #9CA3AF;
+  }
+
+  .trend-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .trend-badge.up {
+    background: #F0FDF4;
+    color: #16A34A;
+  }
+
+  .trend-badge.down {
+    background: #FEF2F2;
+    color: #DC2626;
+  }
+
+  /* Sparkline */
+  .sparkline-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 40px;
+    align-self: flex-end;
+  }
+
+  .spark-bar {
+    width: 8px;
+    border-radius: 3px 3px 0 0;
+    transition: height 0.3s;
+  }
+
+  .spark-bar.green { background: #BBF7D0; }
+  .spark-bar.green.active { background: #16A34A; }
+  .spark-bar.red { background: #FECACA; }
+  .spark-bar.red.active { background: #DC2626; }
+
+  /* Metric Panels */
+  .panels-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .panel {
+    background: #FFFFFF;
+    border: 1px solid #E5DDD0;
+    border-radius: 16px;
+    padding: 20px;
+  }
+
+  .panel-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #3D4552;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .panel-title-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: #F5EDE0;
+    color: #B8996F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+  }
+
+  .metric-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #F3EEE6;
+  }
+
+  .metric-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .metric-row:first-of-type {
+    padding-top: 0;
+  }
+
+  .metric-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .metric-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  .metric-icon.sand { background: #F5EDE0; color: #B8996F; }
+  .metric-icon.green { background: #F0FDF4; color: #16A34A; }
+  .metric-icon.blue { background: #EFF6FF; color: #3B82F6; }
+  .metric-icon.purple { background: #F5F3FF; color: #8B5CF6; }
+  .metric-icon.orange { background: #FFF7ED; color: #EA580C; }
+  .metric-icon.slate { background: #F1F5F9; color: #5F6B7C; }
+
+  .metric-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #5F6B7C;
+  }
+
+  .metric-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #3D4552;
+  }
+
+  .metric-subtitle {
+    font-size: 11px;
+    color: #9CA3AF;
+  }
+
+  /* Attention Section */
+  .attention-section {
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #3D4552;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .attention-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .attention-card {
+    background: #FFFFFF;
+    border: 1px solid #E5DDD0;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .attention-card:hover {
+    border-color: #B8996F;
+    box-shadow: 0 2px 8px rgba(184, 153, 111, 0.1);
+  }
+
+  .attention-card.warning {
+    border-left: 3px solid #EAB308;
+  }
+
+  .attention-card.danger {
+    border-left: 3px solid #DC2626;
+  }
+
+  .attention-card.success {
+    border-left: 3px solid #16A34A;
+  }
+
+  .attention-count {
+    font-size: 22px;
+    font-weight: 700;
+    color: #3D4552;
+  }
+
+  .attention-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6B7280;
+    line-height: 1.3;
+  }
+
+  /* Quick Actions */
+  .quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #FFFFFF;
+    border: 1px solid #E5DDD0;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #5F6B7C;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .action-btn:hover {
+    border-color: #B8996F;
+    color: #B8996F;
+    background: #FAF6F0;
+  }
+
+  .action-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Watermark */
+  .watermark {
+    position: absolute;
+    bottom: 16px;
+    right: 24px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #B8996F;
+    opacity: 0.7;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Sidebar Icon Rail -->
+  <div class="sidebar">
+    <div class="sidebar-logo">F</div>
+    <div class="sidebar-icon active">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </div>
+    <div class="sidebar-icon">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    </div>
+    <div class="sidebar-icon">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1"/></svg>
+    </div>
+    <div class="sidebar-icon">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M20 12a8 8 0 1 1-16 0"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+    </div>
+    <div class="sidebar-icon">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    </div>
+    <div class="sidebar-icon">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    </div>
+    <div class="sidebar-icon" style="margin-top: auto;">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </div>
+  </div>
+
+  <!-- Sub Panel -->
+  <div class="sub-panel">
+    <div class="sub-panel-title">Home</div>
+    <div class="sub-panel-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="sub-panel-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+      Fleet Overview
+    </div>
+
+    <div class="sub-panel-title" style="margin-top: 20px;">Operations</div>
+    <div class="sub-panel-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Couriers
+    </div>
+    <div class="sub-panel-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      Platforms
+    </div>
+    <div class="sub-panel-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Revenue
+    </div>
+
+    <div class="sub-panel-title" style="margin-top: 20px;">Finance</div>
+    <div class="sub-panel-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Payroll
+    </div>
+    <div class="sub-panel-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Cashflow
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <!-- App Bar -->
+    <div class="app-bar">
+      <div class="app-bar-left">
+        <div class="greeting">Good Morning, Ahmed</div>
+        <div class="greeting-sub">
+          Monday, 24 Feb 2026
+          <span class="status-badge warning">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            3 items need attention
+          </span>
+        </div>
+      </div>
+      <div class="app-bar-right">
+        <div class="icon-btn">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </div>
+        <div class="avatar">AH</div>
+      </div>
+    </div>
+
+    <!-- Featured Cards: Cash Inflow / Outflow -->
+    <div class="featured-row">
+      <div class="featured-card">
+        <div class="featured-card-left">
+          <div class="featured-label">
+            <span class="featured-icon inflow">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            </span>
+            Cash Inflow
+          </div>
+          <div class="featured-value">SAR 142,850</div>
+          <div class="featured-sub">
+            February 2026
+            <span class="trend-badge up" style="margin-left: 6px;">+12.4%</span>
+          </div>
+        </div>
+        <div class="sparkline-container">
+          <div class="spark-bar green" style="height: 18px;"></div>
+          <div class="spark-bar green" style="height: 24px;"></div>
+          <div class="spark-bar green" style="height: 20px;"></div>
+          <div class="spark-bar green" style="height: 28px;"></div>
+          <div class="spark-bar green" style="height: 32px;"></div>
+          <div class="spark-bar green active" style="height: 38px;"></div>
+        </div>
+      </div>
+
+      <div class="featured-card">
+        <div class="featured-card-left">
+          <div class="featured-label">
+            <span class="featured-icon outflow">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+            </span>
+            Cash Outflow
+          </div>
+          <div class="featured-value">SAR 98,320</div>
+          <div class="featured-sub">
+            February 2026
+            <span class="trend-badge down" style="margin-left: 6px;">-3.1%</span>
+          </div>
+        </div>
+        <div class="sparkline-container">
+          <div class="spark-bar red" style="height: 30px;"></div>
+          <div class="spark-bar red" style="height: 34px;"></div>
+          <div class="spark-bar red" style="height: 28px;"></div>
+          <div class="spark-bar red" style="height: 32px;"></div>
+          <div class="spark-bar red" style="height: 26px;"></div>
+          <div class="spark-bar red active" style="height: 24px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metric Panels -->
+    <div class="panels-row">
+      <!-- Payroll & Expenses -->
+      <div class="panel">
+        <div class="panel-title">
+          <span class="panel-title-icon">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          </span>
+          Payroll & Expenses
+        </div>
+        <div class="metric-row">
+          <div class="metric-left">
+            <div class="metric-icon sand">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+            </div>
+            <div>
+              <div class="metric-label">Pending Payouts</div>
+              <div class="metric-subtitle">SAR 34,200</div>
+            </div>
+          </div>
+          <div class="metric-value">18</div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-left">
+            <div class="metric-icon orange">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div>
+              <div class="metric-label">Pending Expenses</div>
+            </div>
+          </div>
+          <div class="metric-value">7</div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-left">
+            <div class="metric-icon blue">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            </div>
+            <div>
+              <div class="metric-label">Unprocessed Batches</div>
+            </div>
+          </div>
+          <div class="metric-value">3</div>
+        </div>
+      </div>
+
+      <!-- Operations -->
+      <div class="panel">
+        <div class="panel-title">
+          <span class="panel-title-icon">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          </span>
+          Operations
+        </div>
+        <div class="metric-row">
+          <div class="metric-left">
+            <div class="metric-icon green">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div>
+              <div class="metric-label">Active Couriers</div>
+            </div>
+          </div>
+          <div class="metric-value">186</div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-left">
+            <div class="metric-icon purple">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1"/></svg>
+            </div>
+            <div>
+              <div class="metric-label">Deliveries Last Month</div>
+            </div>
+          </div>
+          <div class="metric-value">12,480</div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-left">
+            <div class="metric-icon slate">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div>
+              <div class="metric-label">Equipment In Use</div>
+            </div>
+          </div>
+          <div class="metric-value">152/180</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attention Section -->
+    <div class="attention-section">
+      <div class="section-title">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#D97706" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Needs Attention
+      </div>
+      <div class="attention-grid">
+        <div class="attention-card danger">
+          <div>
+            <div class="attention-count">5</div>
+            <div class="attention-label">Documents Expiring</div>
+          </div>
+        </div>
+        <div class="attention-card warning">
+          <div>
+            <div class="attention-count">3</div>
+            <div class="attention-label">Unprocessed Batches</div>
+          </div>
+        </div>
+        <div class="attention-card warning">
+          <div>
+            <div class="attention-count">2</div>
+            <div class="attention-label">Pending Leave</div>
+          </div>
+        </div>
+        <div class="attention-card success">
+          <div>
+            <div class="attention-count">0</div>
+            <div class="attention-label">Fleet Issues</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div>
+      <div class="section-title" style="margin-bottom: 12px;">Quick Actions</div>
+      <div class="quick-actions">
+        <div class="action-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          Upload Timesheet
+        </div>
+        <div class="action-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          Add Courier
+        </div>
+        <div class="action-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Process Payroll
+        </div>
+        <div class="action-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Review Expenses
+        </div>
+        <div class="action-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          View Cashflow
+        </div>
+        <div class="action-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+          View Reports
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="watermark">fariiq.com</div>
+</div>
+</body>
+</html>

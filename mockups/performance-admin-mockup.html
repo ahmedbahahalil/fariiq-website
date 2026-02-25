@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance Admin - Platform KPI Configuration</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f6fa; color: #2d3436; }
+
+  .header { background: #1a1a2e; color: white; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+  .header h1 { font-size: 18px; font-weight: 600; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .header-badge { background: #e74c3c; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+
+  .layout { display: flex; min-height: calc(100vh - 56px); }
+
+  /* Sidebar */
+  .sidebar { width: 240px; background: white; border-right: 1px solid #eee; padding: 20px 0; flex-shrink: 0; }
+  .sidebar-section { padding: 0 16px; margin-bottom: 24px; }
+  .sidebar-section-title { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #b2bec3; font-weight: 700; margin-bottom: 10px; }
+  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; font-size: 13px; color: #636e72; cursor: pointer; border-radius: 0; transition: all 0.15s; }
+  .sidebar-item:hover { background: #f8f9fa; color: #2d3436; }
+  .sidebar-item.active { background: #f0edff; color: #6c5ce7; font-weight: 600; border-right: 3px solid #6c5ce7; }
+  .sidebar-item .icon { width: 18px; text-align: center; font-size: 14px; }
+  .sidebar-item .count { margin-left: auto; background: #f0f0f0; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; color: #636e72; }
+  .sidebar-item.active .count { background: #6c5ce7; color: white; }
+
+  /* Main Content */
+  .main { flex: 1; padding: 28px 32px; overflow-y: auto; }
+  .page-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .page-subtitle { font-size: 13px; color: #b2bec3; margin-bottom: 28px; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 0; border-bottom: 2px solid #f0f0f0; margin-bottom: 28px; }
+  .tab { padding: 10px 20px; font-size: 13px; font-weight: 500; color: #b2bec3; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+  .tab:hover { color: #636e72; }
+  .tab.active { color: #6c5ce7; border-bottom-color: #6c5ce7; font-weight: 600; }
+
+  /* Platform Cards Row */
+  .platforms-row { display: flex; gap: 12px; margin-bottom: 28px; }
+  .platform-tab { display: flex; align-items: center; gap: 10px; padding: 12px 18px; background: white; border: 2px solid #f0f0f0; border-radius: 10px; cursor: pointer; transition: all 0.15s; }
+  .platform-tab:hover { border-color: #ddd; }
+  .platform-tab.active { border-color: #6c5ce7; background: #f8f6ff; }
+  .platform-tab .pdot { width: 12px; height: 12px; border-radius: 50%; }
+  .platform-tab .pname { font-size: 13px; font-weight: 600; }
+  .platform-tab .pstatus { font-size: 10px; color: #b2bec3; }
+  .platform-tab .pstatus.connected { color: #00b894; }
+  .platform-tab.active .pname { color: #6c5ce7; }
+
+  /* KPI Mapping Cards */
+  .mapping-section { margin-bottom: 32px; }
+  .mapping-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .mapping-section-header h3 { font-size: 16px; font-weight: 700; }
+  .btn { padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-primary { background: #6c5ce7; color: white; }
+  .btn-primary:hover { background: #5a4bd1; }
+  .btn-secondary { background: #f0f0f0; color: #636e72; }
+  .btn-secondary:hover { background: #e0e0e0; }
+  .btn-sm { padding: 5px 12px; font-size: 11px; }
+  .btn-danger { background: #fff0f0; color: #d63031; }
+  .btn-danger:hover { background: #ffe0e0; }
+
+  .mapping-card { background: white; border-radius: 12px; border: 1px solid #f0f0f0; margin-bottom: 12px; overflow: hidden; }
+  .mapping-card.disabled { opacity: 0.5; }
+  .mapping-card-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; cursor: pointer; }
+  .mapping-card-header:hover { background: #fafafa; }
+  .mapping-card-left { display: flex; align-items: center; gap: 14px; }
+  .mapping-card-left .kpi-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .mapping-card-left .kpi-icon.success { background: #e6fff5; }
+  .mapping-card-left .kpi-icon.time { background: #e3f2fd; }
+  .mapping-card-left .kpi-icon.rating { background: #fff8e1; }
+  .mapping-card-left .kpi-icon.accept { background: #f3e5f5; }
+  .mapping-card-left .kpi-icon.orders { background: #fce4ec; }
+  .mapping-card-left .kpi-info h4 { font-size: 14px; font-weight: 600; }
+  .mapping-card-left .kpi-info p { font-size: 11px; color: #b2bec3; margin-top: 2px; }
+  .mapping-card-right { display: flex; align-items: center; gap: 12px; }
+  .status-pill { padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .status-pill.mapped { background: #e6fff5; color: #00b894; }
+  .status-pill.partial { background: #fff8e6; color: #e17055; }
+  .status-pill.unmapped { background: #f0f0f0; color: #b2bec3; }
+  .chevron { color: #b2bec3; font-size: 18px; transition: transform 0.2s; }
+  .mapping-card.open .chevron { transform: rotate(90deg); }
+
+  /* Expanded mapping detail */
+  .mapping-detail { display: none; padding: 0 20px 20px; border-top: 1px solid #f8f8f8; }
+  .mapping-card.open .mapping-detail { display: block; }
+
+  .detail-grid { display: grid; grid-template-columns: 1fr 40px 1fr; gap: 16px; align-items: start; margin-top: 16px; }
+  .detail-box { background: #f8f9fa; border-radius: 10px; padding: 16px; }
+  .detail-box h5 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #b2bec3; margin-bottom: 12px; font-weight: 700; }
+  .detail-box label { font-size: 12px; color: #636e72; font-weight: 500; display: block; margin-bottom: 5px; }
+  .detail-box select, .detail-box input[type="text"], .detail-box textarea { width: 100%; padding: 8px 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 13px; background: white; margin-bottom: 12px; font-family: inherit; }
+  .detail-box select:focus, .detail-box input:focus, .detail-box textarea:focus { outline: none; border-color: #6c5ce7; box-shadow: 0 0 0 3px rgba(108,92,231,0.1); }
+  .detail-box textarea { resize: vertical; min-height: 60px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; }
+  .arrow-col { display: flex; align-items: center; justify-content: center; padding-top: 60px; font-size: 24px; color: #b2bec3; }
+
+  .fariiq-def { background: #f8f6ff; border: 1px solid #e8e3ff; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; }
+  .fariiq-def .def-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #6c5ce7; font-weight: 700; margin-bottom: 4px; }
+  .fariiq-def .def-text { font-size: 12px; color: #636e72; line-height: 1.5; }
+
+  .sample-data { margin-top: 12px; }
+  .sample-data h5 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #b2bec3; margin-bottom: 8px; font-weight: 700; }
+  .sample-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .sample-table th { background: #f0f0f0; padding: 6px 10px; text-align: left; font-weight: 600; color: #636e72; }
+  .sample-table td { padding: 6px 10px; border-bottom: 1px solid #f0f0f0; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; }
+  .sample-table tr:last-child td { border-bottom: none; }
+
+  /* Toggle switch */
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; }
+  .toggle-row label { font-size: 12px; color: #636e72; }
+  .toggle { position: relative; width: 40px; height: 22px; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ddd; border-radius: 22px; transition: 0.2s; }
+  .toggle .slider:before { content: ''; position: absolute; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
+  .toggle input:checked + .slider { background: #6c5ce7; }
+  .toggle input:checked + .slider:before { transform: translateX(18px); }
+
+  /* Data source config */
+  .source-config { background: white; border-radius: 12px; border: 1px solid #f0f0f0; padding: 20px; margin-bottom: 24px; }
+  .source-config h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .source-config .desc { font-size: 12px; color: #b2bec3; margin-bottom: 16px; }
+  .source-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .source-option { border: 2px solid #f0f0f0; border-radius: 10px; padding: 16px; cursor: pointer; text-align: center; transition: all 0.15s; }
+  .source-option:hover { border-color: #ddd; }
+  .source-option.active { border-color: #6c5ce7; background: #f8f6ff; }
+  .source-option .source-icon { font-size: 28px; margin-bottom: 8px; }
+  .source-option .source-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .source-option .source-desc { font-size: 11px; color: #b2bec3; }
+
+  /* Schema detected */
+  .schema-detected { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; display: flex; align-items: start; gap: 10px; }
+  .schema-detected .check { color: #00b894; font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .schema-detected .schema-text { font-size: 12px; color: #636e72; line-height: 1.5; }
+  .schema-detected .schema-text strong { color: #2d3436; }
+
+  /* Column list */
+  .column-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .column-chip { background: white; border: 1px solid #e0e0e0; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-family: 'SF Mono', 'Fira Code', monospace; color: #636e72; }
+  .column-chip.used { background: #f0edff; border-color: #6c5ce7; color: #6c5ce7; }
+
+  /* Threshold config */
+  .threshold-section { background: white; border-radius: 12px; border: 1px solid #f0f0f0; padding: 20px; margin-bottom: 24px; }
+  .threshold-section h3 { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+  .threshold-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .threshold-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8f9fa; border-radius: 8px; }
+  .threshold-item .t-label { flex: 1; }
+  .threshold-item .t-label .t-name { font-size: 13px; font-weight: 600; }
+  .threshold-item .t-label .t-desc { font-size: 11px; color: #b2bec3; margin-top: 2px; }
+  .threshold-item input[type="number"] { width: 70px; padding: 6px 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 13px; text-align: center; }
+  .threshold-item .t-unit { font-size: 12px; color: #b2bec3; }
+
+  /* Test / Preview */
+  .test-section { background: white; border-radius: 12px; border: 2px dashed #e0e0e0; padding: 24px; text-align: center; margin-bottom: 24px; }
+  .test-section h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .test-section p { font-size: 12px; color: #b2bec3; margin-bottom: 16px; }
+
+  /* Footer actions */
+  .footer-actions { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-top: 1px solid #f0f0f0; margin-top: 16px; }
+  .footer-actions .left { font-size: 12px; color: #b2bec3; }
+  .footer-actions .right { display: flex; gap: 10px; }
+
+  .watermark { text-align: center; padding: 24px; color: #b2bec3; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Performance Admin</h1>
+  <div class="header-right">
+    <span class="header-badge">System Admin</span>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Performance</div>
+      <div class="sidebar-item active">
+        <span class="icon">&#9881;</span> KPI Definitions
+      </div>
+      <div class="sidebar-item">
+        <span class="icon">&#9638;</span> Platforms <span class="count">4</span>
+      </div>
+      <div class="sidebar-item">
+        <span class="icon">&#9650;</span> Thresholds & Targets
+      </div>
+      <div class="sidebar-item">
+        <span class="icon">&#9888;</span> Alert Rules <span class="count">6</span>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Data</div>
+      <div class="sidebar-item">
+        <span class="icon">&#8635;</span> Import Schedule
+      </div>
+      <div class="sidebar-item">
+        <span class="icon">&#9744;</span> Upload History
+      </div>
+      <div class="sidebar-item">
+        <span class="icon">&#9783;</span> Raw Data Viewer
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Quality</div>
+      <div class="sidebar-item">
+        <span class="icon">&#10003;</span> Validation Rules
+      </div>
+      <div class="sidebar-item">
+        <span class="icon">&#9888;</span> Data Issues <span class="count">3</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="page-title">KPI Mapping Configuration</div>
+    <div class="page-subtitle">Define how each platform's raw data translates into Fariiq unified KPIs</div>
+
+    <!-- Platform Selector -->
+    <div class="platforms-row">
+      <div class="platform-tab active">
+        <div class="pdot" style="background:#ff6b00"></div>
+        <div>
+          <div class="pname">Talabat</div>
+          <div class="pstatus connected">4/5 KPIs mapped</div>
+        </div>
+      </div>
+      <div class="platform-tab">
+        <div class="pdot" style="background:#2ecc71"></div>
+        <div>
+          <div class="pname">Marsool</div>
+          <div class="pstatus connected">5/5 KPIs mapped</div>
+        </div>
+      </div>
+      <div class="platform-tab">
+        <div class="pdot" style="background:#9b59b6"></div>
+        <div>
+          <div class="pname">Jahez</div>
+          <div class="pstatus" style="color:#e17055">3/5 KPIs mapped</div>
+        </div>
+      </div>
+      <div class="platform-tab">
+        <div class="pdot" style="background:#e74c3c"></div>
+        <div>
+          <div class="pname">HungerStation</div>
+          <div class="pstatus connected">5/5 KPIs mapped</div>
+        </div>
+      </div>
+      <div class="platform-tab" style="border-style: dashed; justify-content: center;">
+        <div class="pname" style="color:#b2bec3; font-size: 12px;">+ Add Platform</div>
+      </div>
+    </div>
+
+    <!-- Data Source Config for selected platform -->
+    <div class="source-config">
+      <h3>Data Source — Talabat</h3>
+      <div class="desc">How does performance data arrive from this platform?</div>
+      <div class="source-grid">
+        <div class="source-option active">
+          <div class="source-icon">&#128202;</div>
+          <div class="source-name">File Upload</div>
+          <div class="source-desc">CSV, Excel, or Tableau export uploaded manually or via schedule</div>
+        </div>
+        <div class="source-option">
+          <div class="source-icon">&#128268;</div>
+          <div class="source-name">API Integration</div>
+          <div class="source-desc">Direct connection to platform's API (if available)</div>
+        </div>
+        <div class="source-option">
+          <div class="source-icon">&#9993;</div>
+          <div class="source-name">Email Ingestion</div>
+          <div class="source-desc">Auto-parse daily reports sent to a dedicated inbox</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detected Schema -->
+    <div class="schema-detected">
+      <div class="check">&#10003;</div>
+      <div class="schema-text">
+        <strong>Schema detected from last upload</strong> (talabat_daily_report_20260224.xlsx)<br>
+        24 columns found. Columns used in KPI mappings are highlighted.
+        <div class="column-chips">
+          <span class="column-chip">date</span>
+          <span class="column-chip">driver_id</span>
+          <span class="column-chip">driver_name</span>
+          <span class="column-chip used">total_orders</span>
+          <span class="column-chip used">delivered_count</span>
+          <span class="column-chip used">cancelled_by_customer</span>
+          <span class="column-chip">cancelled_by_driver</span>
+          <span class="column-chip used">avg_delivery_duration</span>
+          <span class="column-chip used">rider_rating</span>
+          <span class="column-chip used">acceptance_rate</span>
+          <span class="column-chip">zone</span>
+          <span class="column-chip">shift</span>
+          <span class="column-chip">peak_hours_orders</span>
+          <span class="column-chip">earnings</span>
+          <span class="column-chip">tips</span>
+          <span class="column-chip">...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI Mapping Cards -->
+    <div class="mapping-section">
+      <div class="mapping-section-header">
+        <h3>KPI Mappings</h3>
+      </div>
+
+      <!-- KPI 1: Delivery Success Rate - EXPANDED -->
+      <div class="mapping-card open">
+        <div class="mapping-card-header">
+          <div class="mapping-card-left">
+            <div class="kpi-icon success">&#10003;</div>
+            <div class="kpi-info">
+              <h4>Delivery Success Rate</h4>
+              <p>How Talabat data maps to this Fariiq KPI</p>
+            </div>
+          </div>
+          <div class="mapping-card-right">
+            <span class="status-pill mapped">Mapped</span>
+            <span class="chevron">&#9656;</span>
+          </div>
+        </div>
+        <div class="mapping-detail">
+          <div class="fariiq-def">
+            <div class="def-label">Fariiq Definition</div>
+            <div class="def-text">Completed deliveries divided by total assigned orders, excluding customer-initiated cancellations. Expressed as a percentage (0-100%).</div>
+          </div>
+
+          <div class="detail-grid">
+            <div class="detail-box">
+              <h5>Talabat Source Columns</h5>
+              <label>Numerator (completed deliveries)</label>
+              <select>
+                <option selected>delivered_count</option>
+                <option>total_orders</option>
+                <option>peak_hours_orders</option>
+              </select>
+              <label>Denominator (total orders)</label>
+              <select>
+                <option selected>total_orders</option>
+                <option>delivered_count</option>
+              </select>
+              <label>Exclusions (subtract from denominator)</label>
+              <select>
+                <option selected>cancelled_by_customer</option>
+                <option>cancelled_by_driver</option>
+                <option>None</option>
+              </select>
+            </div>
+            <div class="arrow-col">&#10132;</div>
+            <div class="detail-box">
+              <h5>Transformation Formula</h5>
+              <label>Formula</label>
+              <textarea readonly>delivered_count / (total_orders - cancelled_by_customer) * 100</textarea>
+              <label>Output Unit</label>
+              <select>
+                <option selected>Percentage (%)</option>
+                <option>Decimal (0-1)</option>
+                <option>Count</option>
+              </select>
+              <div class="toggle-row">
+                <label>Round to 1 decimal place</label>
+                <label class="toggle"><input type="checkbox" checked><span class="slider"></span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="sample-data">
+            <h5>Preview with Last Upload Data</h5>
+            <table class="sample-table">
+              <thead>
+                <tr>
+                  <th>Driver</th>
+                  <th>delivered_count</th>
+                  <th>total_orders</th>
+                  <th>cancelled_by_customer</th>
+                  <th style="color:#6c5ce7">&#8594; Fariiq Success Rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Ahmed K.</td>
+                  <td>42</td>
+                  <td>45</td>
+                  <td>1</td>
+                  <td style="color:#6c5ce7; font-weight:600;">95.5%</td>
+                </tr>
+                <tr>
+                  <td>Mohammed S.</td>
+                  <td>38</td>
+                  <td>43</td>
+                  <td>2</td>
+                  <td style="color:#6c5ce7; font-weight:600;">92.7%</td>
+                </tr>
+                <tr>
+                  <td>Ali R.</td>
+                  <td>29</td>
+                  <td>35</td>
+                  <td>0</td>
+                  <td style="color:#6c5ce7; font-weight:600;">82.9%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI 2: Avg Delivery Time - collapsed -->
+      <div class="mapping-card">
+        <div class="mapping-card-header">
+          <div class="mapping-card-left">
+            <div class="kpi-icon time">&#9201;</div>
+            <div class="kpi-info">
+              <h4>Average Delivery Time</h4>
+              <p>avg_delivery_duration &#8594; minutes</p>
+            </div>
+          </div>
+          <div class="mapping-card-right">
+            <span class="status-pill mapped">Mapped</span>
+            <span class="chevron">&#9656;</span>
+          </div>
+        </div>
+        <div class="mapping-detail"></div>
+      </div>
+
+      <!-- KPI 3: Customer Rating - collapsed -->
+      <div class="mapping-card">
+        <div class="mapping-card-header">
+          <div class="mapping-card-left">
+            <div class="kpi-icon rating">&#9733;</div>
+            <div class="kpi-info">
+              <h4>Customer Rating</h4>
+              <p>rider_rating &#8594; 5-star scale (no conversion needed)</p>
+            </div>
+          </div>
+          <div class="mapping-card-right">
+            <span class="status-pill mapped">Mapped</span>
+            <span class="chevron">&#9656;</span>
+          </div>
+        </div>
+        <div class="mapping-detail"></div>
+      </div>
+
+      <!-- KPI 4: Acceptance Rate - collapsed -->
+      <div class="mapping-card">
+        <div class="mapping-card-header">
+          <div class="mapping-card-left">
+            <div class="kpi-icon accept">&#9745;</div>
+            <div class="kpi-info">
+              <h4>Acceptance Rate</h4>
+              <p>acceptance_rate &#8594; percentage (direct mapping)</p>
+            </div>
+          </div>
+          <div class="mapping-card-right">
+            <span class="status-pill mapped">Mapped</span>
+            <span class="chevron">&#9656;</span>
+          </div>
+        </div>
+        <div class="mapping-detail"></div>
+      </div>
+
+      <!-- KPI 5: Total Orders - NOT MAPPED -->
+      <div class="mapping-card">
+        <div class="mapping-card-header">
+          <div class="mapping-card-left">
+            <div class="kpi-icon orders">&#9783;</div>
+            <div class="kpi-info">
+              <h4>Revenue per Order</h4>
+              <p style="color:#e17055;">Not yet mapped — select source columns</p>
+            </div>
+          </div>
+          <div class="mapping-card-right">
+            <span class="status-pill unmapped">Unmapped</span>
+            <span class="chevron">&#9656;</span>
+          </div>
+        </div>
+        <div class="mapping-detail"></div>
+      </div>
+    </div>
+
+    <!-- Thresholds -->
+    <div class="threshold-section">
+      <h3>Targets & Thresholds — Talabat</h3>
+      <p style="font-size:12px; color:#b2bec3; margin-bottom:16px;">Set per-platform targets. These override global defaults for Talabat only.</p>
+      <div class="threshold-grid">
+        <div class="threshold-item">
+          <div class="t-label">
+            <div class="t-name">Delivery Success Rate</div>
+            <div class="t-desc">Global default: 90%</div>
+          </div>
+          <input type="number" value="92" style="border-color:#6c5ce7;">
+          <div class="t-unit">%</div>
+        </div>
+        <div class="threshold-item">
+          <div class="t-label">
+            <div class="t-name">Avg Delivery Time</div>
+            <div class="t-desc">Global default: 30 min</div>
+          </div>
+          <input type="number" value="28">
+          <div class="t-unit">min</div>
+        </div>
+        <div class="threshold-item">
+          <div class="t-label">
+            <div class="t-name">Customer Rating</div>
+            <div class="t-desc">Global default: 4.7</div>
+          </div>
+          <input type="number" value="4.7" step="0.1">
+          <div class="t-unit">/ 5</div>
+        </div>
+        <div class="threshold-item">
+          <div class="t-label">
+            <div class="t-name">Acceptance Rate</div>
+            <div class="t-desc">Global default: 85%</div>
+          </div>
+          <input type="number" value="85">
+          <div class="t-unit">%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Test with real data -->
+    <div class="test-section">
+      <h3>Test Mapping with Real Data</h3>
+      <p>Upload a sample file or use the last import to verify your mappings produce correct results</p>
+      <div style="display:flex; gap:12px; justify-content:center;">
+        <button class="btn btn-primary">&#9654; Test with Last Import</button>
+        <button class="btn btn-secondary">&#8593; Upload Sample File</button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-actions">
+      <div class="left">Last saved: Feb 24, 2026 at 3:45 PM by admin@fariiq.com</div>
+      <div class="right">
+        <button class="btn btn-secondary">Discard Changes</button>
+        <button class="btn btn-primary">Save Configuration</button>
+      </div>
+    </div>
+
+    <div class="watermark">Mockup — Fariiq Performance Admin Panel</div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3PL Navigation - Option B: Full Hierarchy</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined|Material+Icons" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1565C0;
+    --primary-light: #E3F2FD;
+    --primary-dark: #0D47A1;
+    --surface: #FFFFFF;
+    --bg: #F5F7FA;
+    --text: #1E293B;
+    --text-secondary: #64748B;
+    --border: #E2E8F0;
+    --hover: #F1F5F9;
+    --active-bg: #DBEAFE;
+    --rail-bg: #0D47A1;
+    --rail-hover: rgba(255,255,255,0.1);
+    --rail-active: rgba(255,255,255,0.18);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0F172A;
+    color: var(--text);
+  }
+
+  .page-header {
+    background: linear-gradient(135deg, #1E293B, #0F172A);
+    padding: 40px 40px 24px;
+    text-align: center;
+    border-bottom: 1px solid #334155;
+  }
+  .page-header h1 { color: #F8FAFC; font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+  .page-header p { color: #94A3B8; font-size: 14px; }
+
+  .view-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    background: #1E293B;
+    padding: 12px 40px;
+    border-bottom: 1px solid #334155;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .view-btn {
+    padding: 10px 20px;
+    background: none;
+    border: 1px solid #334155;
+    color: #94A3B8;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+  .view-btn:hover { border-color: #60A5FA; color: #E2E8F0; }
+  .view-btn.active { background: #1E40AF; border-color: #1E40AF; color: white; }
+
+  .view-section { display: none; }
+  .view-section.active { display: block; }
+
+  .section-desc {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px;
+    color: #94A3B8;
+    font-size: 14px;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  /* Browser Chrome */
+  .browser-frame {
+    background: #1E293B;
+    border-radius: 12px;
+    overflow: hidden;
+    max-width: 1100px;
+    margin: 32px auto;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+    border: 1px solid #334155;
+  }
+  .browser-titlebar {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    background: #0F172A;
+    gap: 8px;
+  }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.r { background: #EF4444; }
+  .dot.y { background: #F59E0B; }
+  .dot.g { background: #22C55E; }
+  .browser-url {
+    flex: 1;
+    margin-left: 8px;
+    background: #1E293B;
+    border-radius: 6px;
+    padding: 5px 12px;
+    color: #64748B;
+    font-size: 12px;
+    font-family: monospace;
+  }
+
+  .app-frame {
+    display: flex;
+    height: 620px;
+    background: var(--bg);
+  }
+
+  /* ============================================ */
+  /* ICON RAIL                                    */
+  /* ============================================ */
+  .rail {
+    width: 76px;
+    background: var(--rail-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 0;
+    flex-shrink: 0;
+  }
+  .rail-item {
+    width: 58px;
+    height: 54px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border-radius: 14px;
+    cursor: pointer;
+    margin: 2px 0;
+    transition: all 0.15s;
+    color: rgba(255,255,255,0.55);
+    position: relative;
+  }
+  .rail-item:hover {
+    background: var(--rail-hover);
+    color: rgba(255,255,255,0.9);
+  }
+  .rail-item.active {
+    background: var(--rail-active);
+    color: #FFFFFF;
+  }
+  .rail-item .material-icons-outlined { font-size: 22px; }
+  .rail-item .r-label { font-size: 10px; font-weight: 500; }
+  .rail-spacer { flex: 1; }
+  .rail-divider { width: 36px; height: 1px; background: rgba(255,255,255,0.12); margin: 6px 0; }
+  .rail-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 3px;
+    background: white;
+    border-radius: 0 3px 3px 0;
+  }
+
+  /* ============================================ */
+  /* COLLAPSIBLE SUB-NAV                          */
+  /* ============================================ */
+  .subnav-wrapper {
+    display: flex;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .subnav {
+    width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    flex-shrink: 0;
+    overflow: hidden;
+    display: none;
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .subnav.active { display: block; }
+  .subnav.collapsed { width: 0; border-right: none; }
+
+  .subnav-inner {
+    width: 220px;
+    overflow-y: auto;
+    height: 100%;
+  }
+
+  .subnav-header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .subnav-header h2 { font-size: 16px; font-weight: 700; color: var(--text); }
+  .subnav-header .subtitle { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+  .subnav-group { padding: 4px 0; }
+  .subnav-group-title {
+    padding: 14px 20px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #94A3B8;
+  }
+
+  .subnav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.12s;
+    border-left: 3px solid transparent;
+    white-space: nowrap;
+  }
+  .subnav-item:hover { background: var(--hover); color: var(--text); }
+  .subnav-item.active {
+    background: var(--active-bg);
+    color: var(--primary);
+    border-left-color: var(--primary);
+    font-weight: 600;
+  }
+  .subnav-item .material-icons-outlined { font-size: 18px; }
+
+  .subnav-divider { height: 1px; background: var(--border); margin: 2px 16px; }
+
+  /* Collapse toggle button */
+  .collapse-toggle {
+    position: absolute;
+    right: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: all 0.2s;
+    color: var(--text-secondary);
+  }
+  .collapse-toggle:hover {
+    background: var(--active-bg);
+    color: var(--primary);
+    border-color: var(--primary);
+  }
+  .collapse-toggle .material-icons-outlined { font-size: 16px; transition: transform 0.25s; }
+  .collapse-toggle.is-collapsed .material-icons-outlined { transform: rotate(180deg); }
+
+  /* ============================================ */
+  /* MAIN CONTENT                                 */
+  /* ============================================ */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+  .topbar {
+    height: 52px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    flex-shrink: 0;
+  }
+  .breadcrumb { font-size: 13px; color: var(--text-secondary); }
+  .breadcrumb span { color: var(--text); font-weight: 600; }
+  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .topbar-btn {
+    width: 32px; height: 32px; border-radius: 8px; background: var(--hover);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary); cursor: pointer;
+  }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--primary);
+    color: white; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+
+  .content { flex: 1; padding: 24px; overflow-y: auto; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat-card {
+    background: var(--surface); border-radius: 10px; padding: 18px;
+    border: 1px solid var(--border);
+  }
+  .stat-card .label { font-size: 12px; color: var(--text-secondary); margin-bottom: 2px; }
+  .stat-card .value { font-size: 24px; font-weight: 700; color: var(--text); }
+
+  /* ============================================ */
+  /* HIERARCHY OVERVIEW                           */
+  /* ============================================ */
+  .hierarchy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    max-width: 1100px;
+    margin: 32px auto;
+    padding: 0 40px;
+  }
+  .hier-card {
+    background: #1E293B;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #334155;
+  }
+  .hier-card .hier-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #334155;
+  }
+  .hier-card .hier-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 20px;
+  }
+  .hier-icon.blue { background: #1E40AF; color: #93C5FD; }
+  .hier-icon.green { background: #065F46; color: #6EE7B7; }
+  .hier-icon.purple { background: #5B21B6; color: #C4B5FD; }
+  .hier-icon.orange { background: #9A3412; color: #FDBA74; }
+  .hier-icon.teal { background: #115E59; color: #5EEAD4; }
+  .hier-icon.gray { background: #374151; color: #9CA3AF; }
+  .hier-icon.red { background: #7F1D1D; color: #FCA5A5; }
+
+  .hier-card .hier-title { font-size: 15px; font-weight: 700; color: #F1F5F9; }
+  .hier-card .hier-count { font-size: 11px; color: #64748B; margin-top: 1px; }
+
+  .hier-group-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: #64748B; padding: 8px 0 4px; margin-top: 4px;
+  }
+  .hier-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 0; font-size: 13px; color: #CBD5E1;
+  }
+  .hier-item .material-icons-outlined { font-size: 16px; color: #64748B; }
+  .hier-item .tier-tag {
+    margin-left: auto; font-size: 9px; padding: 1px 6px;
+    border-radius: 3px; font-weight: 600;
+  }
+  .tier-1 { background: #064E3B; color: #6EE7B7; }
+  .tier-2 { background: #1E3A5F; color: #93C5FD; }
+  .tier-3 { background: #3B0764; color: #C4B5FD; }
+  .tier-4 { background: #4C1D95; color: #DDD6FE; }
+  .tier-addon { background: #78350F; color: #FDE68A; }
+  .tier-admin { background: #374151; color: #9CA3AF; }
+
+  /* ============================================ */
+  /* MOBILE MOCKUP                                */
+  /* ============================================ */
+  .mobile-container {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 32px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+  }
+
+  .phone-frame {
+    width: 375px;
+    height: 720px;
+    background: #1E293B;
+    border-radius: 40px;
+    padding: 12px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+    border: 2px solid #334155;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .phone-notch {
+    width: 120px;
+    height: 28px;
+    background: #1E293B;
+    border-radius: 0 0 16px 16px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+  }
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+    border-radius: 30px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* Mobile topbar */
+  .m-topbar {
+    height: 48px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    flex-shrink: 0;
+    margin-top: 28px;
+  }
+  .m-topbar .hamburger {
+    width: 32px; height: 32px; display: flex; align-items: center;
+    justify-content: center; color: var(--text); cursor: pointer;
+  }
+  .m-topbar .m-title {
+    flex: 1; text-align: center; font-size: 16px; font-weight: 600; color: var(--text);
+  }
+  .m-topbar .m-avatar {
+    width: 28px; height: 28px; border-radius: 50%; background: var(--primary);
+    color: white; display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+  }
+
+  /* Mobile content */
+  .m-content {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .m-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .m-stat-card {
+    background: var(--surface); border-radius: 10px; padding: 14px;
+    border: 1px solid var(--border);
+  }
+  .m-stat-card .label { font-size: 11px; color: var(--text-secondary); margin-bottom: 2px; }
+  .m-stat-card .value { font-size: 20px; font-weight: 700; color: var(--text); }
+
+  /* Bottom nav */
+  .m-bottom-nav {
+    height: 64px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-shrink: 0;
+    padding-bottom: 4px;
+  }
+  .m-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    padding: 4px 12px;
+    border-radius: 12px;
+    transition: all 0.15s;
+    color: var(--text-secondary);
+    position: relative;
+  }
+  .m-nav-item:hover { color: var(--primary); }
+  .m-nav-item.active { color: var(--primary); }
+  .m-nav-item .material-icons-outlined { font-size: 22px; }
+  .m-nav-item .m-nav-label { font-size: 10px; font-weight: 500; }
+  .m-nav-item.active::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 0 0 3px 3px;
+  }
+
+  /* Bottom sheet overlay */
+  .m-sheet-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 30;
+    display: none;
+    border-radius: 30px;
+  }
+  .m-sheet-overlay.active { display: block; }
+
+  .m-sheet {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--surface);
+    border-radius: 20px 20px 30px 30px;
+    z-index: 31;
+    display: none;
+    max-height: 75%;
+    overflow-y: auto;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+  }
+  .m-sheet.active { display: block; }
+
+  .m-sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: #CBD5E1;
+    border-radius: 2px;
+    margin: 10px auto;
+  }
+  .m-sheet-header {
+    padding: 4px 20px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .m-sheet-header h3 { font-size: 17px; font-weight: 700; color: var(--text); }
+  .m-sheet-header .subtitle { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+  .m-sheet-group-title {
+    padding: 14px 20px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #94A3B8;
+  }
+  .m-sheet-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    font-size: 15px;
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .m-sheet-item:hover { background: var(--hover); }
+  .m-sheet-item.active {
+    color: var(--primary);
+    font-weight: 600;
+    background: var(--active-bg);
+  }
+  .m-sheet-item .material-icons-outlined { font-size: 22px; color: var(--text-secondary); }
+  .m-sheet-item.active .material-icons-outlined { color: var(--primary); }
+  .m-sheet-divider { height: 1px; background: var(--border); margin: 0 16px; }
+
+  /* Phone label */
+  .phone-label {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #F1F5F9;
+  }
+  .phone-sublabel {
+    text-align: center;
+    margin-top: 4px;
+    font-size: 12px;
+    color: #64748B;
+    max-width: 375px;
+  }
+
+  /* Annotation callout */
+  .callout {
+    background: #1E293B;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 16px 20px;
+    max-width: 280px;
+  }
+  .callout h4 { color: #F1F5F9; font-size: 14px; margin-bottom: 8px; }
+  .callout p { color: #94A3B8; font-size: 13px; line-height: 1.6; }
+  .callout ul { color: #CBD5E1; font-size: 13px; line-height: 1.8; padding-left: 16px; }
+  .callout ul li { margin-bottom: 2px; }
+  .callout .step {
+    display: flex; gap: 10px; margin-bottom: 12px; align-items: flex-start;
+  }
+  .callout .step-num {
+    width: 22px; height: 22px; border-radius: 50%; background: #1E40AF;
+    color: #93C5FD; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+  }
+  .callout .step-text { color: #CBD5E1; font-size: 13px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Option B: Icon Rail + Sub-Navigation</h1>
+  <p>Full hierarchy - Tier 4 Enterprise (all modules)</p>
+</div>
+
+<div class="view-toggle">
+  <button class="view-btn active" onclick="showView('overview')">Hierarchy Overview</button>
+  <button class="view-btn" onclick="showView('interactive')">Desktop (Collapsible)</button>
+  <button class="view-btn" onclick="showView('mobile')">Mobile</button>
+</div>
+
+<!-- ============================================ -->
+<!-- VIEW 1: HIERARCHY OVERVIEW                   -->
+<!-- ============================================ -->
+<div id="view-overview" class="view-section active">
+  <p class="section-desc" style="margin-top: 28px;">
+    6 top-level categories (+1 for system admins). Sub-headers group related items.<br>
+    No section exceeds 9 items. Tier badges show when each item becomes available.
+  </p>
+
+  <div class="hierarchy-grid">
+    <div class="hier-card">
+      <div class="hier-header">
+        <div class="hier-icon blue"><span class="material-icons-outlined">dashboard</span></div>
+        <div><div class="hier-title">Home</div><div class="hier-count">No sub-nav - lands on dashboard</div></div>
+      </div>
+      <div class="hier-item"><span class="material-icons-outlined">dashboard</span> Dashboard <span class="tier-tag tier-1">T1</span></div>
+    </div>
+
+    <div class="hier-card">
+      <div class="hier-header">
+        <div class="hier-icon green"><span class="material-icons-outlined">local_shipping</span></div>
+        <div><div class="hier-title">Operations</div><div class="hier-count">7 items in 2 groups</div></div>
+      </div>
+      <div class="hier-group-label">Fleet</div>
+      <div class="hier-item"><span class="material-icons-outlined">people</span> Couriers <span class="tier-tag tier-1">T1</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">business</span> Platforms <span class="tier-tag tier-1">T1</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">directions_car</span> Assets <span class="tier-tag tier-2">T2</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">trending_up</span> Revenue Tracking <span class="tier-tag tier-3">T3</span></div>
+      <div class="hier-group-label">Insurance</div>
+      <div class="hier-item"><span class="material-icons-outlined">shield</span> Asset Insurance <span class="tier-tag tier-2">T2</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">health_and_safety</span> Medical Insurance <span class="tier-tag tier-2">T2</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">apartment</span> Insurance Providers <span class="tier-tag tier-2">T2</span></div>
+    </div>
+
+    <div class="hier-card">
+      <div class="hier-header">
+        <div class="hier-icon orange"><span class="material-icons-outlined">account_balance_wallet</span></div>
+        <div><div class="hier-title">Finance</div><div class="hier-count">7 items in 3 groups</div></div>
+      </div>
+      <div class="hier-group-label">Payments</div>
+      <div class="hier-item"><span class="material-icons-outlined">payments</span> Payroll <span class="tier-tag tier-1">T1</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">payment</span> Payments <span class="tier-tag tier-1">T1</span></div>
+      <div class="hier-group-label">Expenses</div>
+      <div class="hier-item"><span class="material-icons-outlined">receipt_long</span> Courier Expenses <span class="tier-tag tier-2">T2</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">business_center</span> Op. Expenses <span class="tier-tag tier-3">T3</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">savings</span> Fee Deposits <span class="tier-tag tier-3">T3</span></div>
+      <div class="hier-group-label">Planning</div>
+      <div class="hier-item"><span class="material-icons-outlined">account_balance_wallet</span> Cashflow <span class="tier-tag tier-3">T3</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">account_balance</span> Capital Management <span class="tier-tag tier-3">T3</span></div>
+    </div>
+
+    <div class="hier-card">
+      <div class="hier-header">
+        <div class="hier-icon purple"><span class="material-icons-outlined">badge</span></div>
+        <div><div class="hier-title">HR</div><div class="hier-count">4 items</div></div>
+      </div>
+      <div class="hier-item"><span class="material-icons-outlined">badge</span> Employees <span class="tier-tag tier-4">T4</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">event_busy</span> Leave Management <span class="tier-tag tier-4">T4</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">work</span> Employee Roles <span class="tier-tag tier-4">T4</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">folder_shared</span> Documents <span class="tier-tag tier-4">T4</span></div>
+    </div>
+
+    <div class="hier-card">
+      <div class="hier-header">
+        <div class="hier-icon teal"><span class="material-icons-outlined">analytics</span></div>
+        <div><div class="hier-title">Reports</div><div class="hier-count">4 items</div></div>
+      </div>
+      <div class="hier-item"><span class="material-icons-outlined">analytics</span> Reports <span class="tier-tag tier-1">T1</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">upload_file</span> Timesheet Uploads <span class="tier-tag tier-1">T1</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">track_changes</span> Financial Targets <span class="tier-tag tier-3">T3</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">insert_chart</span> Overhead Analytics <span class="tier-tag tier-3">T3</span></div>
+    </div>
+
+    <div class="hier-card">
+      <div class="hier-header">
+        <div class="hier-icon gray"><span class="material-icons-outlined">settings</span></div>
+        <div><div class="hier-title">Settings</div><div class="hier-count">4 items in 2 groups</div></div>
+      </div>
+      <div class="hier-group-label">Access</div>
+      <div class="hier-item"><span class="material-icons-outlined">person_add</span> Users <span class="tier-tag tier-1">T1</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">admin_panel_settings</span> Permissions <span class="tier-tag tier-1">T1</span></div>
+      <div class="hier-group-label">Account</div>
+      <div class="hier-item"><span class="material-icons-outlined">card_membership</span> My Subscription <span class="tier-tag tier-1">T1</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">receipt</span> My Billing <span class="tier-tag tier-1">T1</span></div>
+    </div>
+
+    <div class="hier-card" style="border-color: #EF4444; border-style: dashed;">
+      <div class="hier-header">
+        <div class="hier-icon red"><span class="material-icons-outlined">admin_panel_settings</span></div>
+        <div><div class="hier-title">System</div><div class="hier-count">9 items in 4 groups - system admins only</div></div>
+      </div>
+      <div class="hier-group-label">Master Data</div>
+      <div class="hier-item"><span class="material-icons-outlined">business_center</span> Companies <span class="tier-tag tier-admin">Admin</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">apps</span> Platform Masters <span class="tier-tag tier-admin">Admin</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">local_shipping</span> Transport Types <span class="tier-tag tier-admin">Admin</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">account_balance</span> Banks <span class="tier-tag tier-admin">Admin</span></div>
+      <div class="hier-group-label">Access Control</div>
+      <div class="hier-item"><span class="material-icons-outlined">shield</span> Roles <span class="tier-tag tier-admin">Admin</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">extension</span> System Modules <span class="tier-tag tier-admin">Admin</span></div>
+      <div class="hier-group-label">Billing</div>
+      <div class="hier-item"><span class="material-icons-outlined">card_membership</span> Subscription Plans <span class="tier-tag tier-admin">Admin</span></div>
+      <div class="hier-item"><span class="material-icons-outlined">receipt_long</span> Billing <span class="tier-tag tier-admin">Admin</span></div>
+      <div class="hier-group-label">Tools</div>
+      <div class="hier-item"><span class="material-icons-outlined">translate</span> Translations <span class="tier-tag tier-admin">Admin</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- VIEW 2: DESKTOP INTERACTIVE (COLLAPSIBLE)    -->
+<!-- ============================================ -->
+<div id="view-interactive" class="view-section">
+  <p class="section-desc" style="margin-top: 28px; margin-bottom: 0;">
+    Click each rail icon to switch categories. Click the <strong style="color:#60A5FA">circular arrow button</strong> on the sub-nav edge to collapse/expand it.
+  </p>
+
+  <div class="browser-frame">
+    <div class="browser-titlebar">
+      <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+      <div class="browser-url" id="url-bar">app.3pl-management.com/admin/dashboard</div>
+    </div>
+    <div class="app-frame">
+
+      <!-- ICON RAIL -->
+      <div class="rail">
+        <div class="rail-item active" data-tab="home" onclick="switchRail(this)">
+          <span class="material-icons-outlined">dashboard</span>
+          <span class="r-label">Home</span>
+        </div>
+        <div class="rail-item" data-tab="operations" onclick="switchRail(this)">
+          <span class="material-icons-outlined">local_shipping</span>
+          <span class="r-label">Operations</span>
+        </div>
+        <div class="rail-item" data-tab="finance" onclick="switchRail(this)">
+          <span class="material-icons-outlined">account_balance_wallet</span>
+          <span class="r-label">Finance</span>
+        </div>
+        <div class="rail-item" data-tab="hr" onclick="switchRail(this)">
+          <span class="material-icons-outlined">badge</span>
+          <span class="r-label">HR</span>
+        </div>
+        <div class="rail-item" data-tab="reports" onclick="switchRail(this)">
+          <span class="material-icons-outlined">analytics</span>
+          <span class="r-label">Reports</span>
+        </div>
+        <div class="rail-spacer"></div>
+        <div class="rail-divider"></div>
+        <div class="rail-item" data-tab="settings" onclick="switchRail(this)">
+          <span class="material-icons-outlined">settings</span>
+          <span class="r-label">Settings</span>
+        </div>
+      </div>
+
+      <!-- SUB-NAV WRAPPER (holds sub-nav + collapse button) -->
+      <div class="subnav-wrapper" id="subnav-wrapper">
+
+        <!-- OPERATIONS -->
+        <div class="subnav" id="subnav-operations">
+          <div class="subnav-inner">
+            <div class="subnav-header"><h2>Operations</h2><div class="subtitle">Fleet management & insurance</div></div>
+            <div class="subnav-group">
+              <div class="subnav-group-title">Fleet</div>
+              <div class="subnav-item active" onclick="selectSubnav(this, 'Couriers', '/admin/couriers')"><span class="material-icons-outlined">people</span> Couriers</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Platforms', '/admin/platforms')"><span class="material-icons-outlined">business</span> Platforms</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Assets', '/admin/assets')"><span class="material-icons-outlined">directions_car</span> Assets</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Revenue Tracking', '/admin/revenue-tracking')"><span class="material-icons-outlined">trending_up</span> Revenue Tracking</div>
+            </div>
+            <div class="subnav-divider"></div>
+            <div class="subnav-group">
+              <div class="subnav-group-title">Insurance</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Asset Insurance', '/admin/insurance/asset')"><span class="material-icons-outlined">shield</span> Asset Insurance</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Medical Insurance', '/admin/insurance/medical')"><span class="material-icons-outlined">health_and_safety</span> Medical Insurance</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Insurance Providers', '/admin/insurance/providers')"><span class="material-icons-outlined">apartment</span> Providers</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FINANCE -->
+        <div class="subnav" id="subnav-finance">
+          <div class="subnav-inner">
+            <div class="subnav-header"><h2>Finance</h2><div class="subtitle">Payments, expenses & planning</div></div>
+            <div class="subnav-group">
+              <div class="subnav-group-title">Payments</div>
+              <div class="subnav-item active" onclick="selectSubnav(this, 'Payroll', '/admin/payroll')"><span class="material-icons-outlined">payments</span> Payroll</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Payments', '/admin/payments')"><span class="material-icons-outlined">payment</span> Payments</div>
+            </div>
+            <div class="subnav-divider"></div>
+            <div class="subnav-group">
+              <div class="subnav-group-title">Expenses</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Courier Expenses', '/admin/courier-expenses')"><span class="material-icons-outlined">receipt_long</span> Courier Expenses</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Op. Expenses', '/admin/operational-expenses')"><span class="material-icons-outlined">business_center</span> Op. Expenses</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Fee Deposits', '/admin/fee-deposits')"><span class="material-icons-outlined">savings</span> Fee Deposits</div>
+            </div>
+            <div class="subnav-divider"></div>
+            <div class="subnav-group">
+              <div class="subnav-group-title">Planning</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Cashflow', '/admin/cashflow')"><span class="material-icons-outlined">account_balance_wallet</span> Cashflow</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Capital Management', '/admin/capital-management')"><span class="material-icons-outlined">account_balance</span> Capital Mgmt</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HR -->
+        <div class="subnav" id="subnav-hr">
+          <div class="subnav-inner">
+            <div class="subnav-header"><h2>HR</h2><div class="subtitle">Employee management</div></div>
+            <div class="subnav-group">
+              <div class="subnav-item active" onclick="selectSubnav(this, 'Employees', '/admin/employees')"><span class="material-icons-outlined">badge</span> Employees</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Leave Management', '/admin/leave-management')"><span class="material-icons-outlined">event_busy</span> Leave Management</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Employee Roles', '/admin/employee-roles')"><span class="material-icons-outlined">work</span> Employee Roles</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Documents', '/admin/hr-documents')"><span class="material-icons-outlined">folder_shared</span> Documents</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- REPORTS -->
+        <div class="subnav" id="subnav-reports">
+          <div class="subnav-inner">
+            <div class="subnav-header"><h2>Reports</h2><div class="subtitle">Data & analytics</div></div>
+            <div class="subnav-group">
+              <div class="subnav-item active" onclick="selectSubnav(this, 'Reports', '/admin/reports')"><span class="material-icons-outlined">analytics</span> Reports</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Timesheet Uploads', '/admin/batches')"><span class="material-icons-outlined">upload_file</span> Timesheet Uploads</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Financial Targets', '/admin/financial-targets')"><span class="material-icons-outlined">track_changes</span> Financial Targets</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Overhead Analytics', '/admin/overhead-analytics')"><span class="material-icons-outlined">insert_chart</span> Overhead Analytics</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div class="subnav" id="subnav-settings">
+          <div class="subnav-inner">
+            <div class="subnav-header"><h2>Settings</h2><div class="subtitle">Users & account</div></div>
+            <div class="subnav-group">
+              <div class="subnav-group-title">Access</div>
+              <div class="subnav-item active" onclick="selectSubnav(this, 'Users', '/admin/users')"><span class="material-icons-outlined">person_add</span> Users</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'Permissions', '/admin/role-permissions')"><span class="material-icons-outlined">admin_panel_settings</span> Permissions</div>
+            </div>
+            <div class="subnav-divider"></div>
+            <div class="subnav-group">
+              <div class="subnav-group-title">Account</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'My Subscription', '/admin/my-subscription')"><span class="material-icons-outlined">card_membership</span> My Subscription</div>
+              <div class="subnav-item" onclick="selectSubnav(this, 'My Billing', '/admin/my-billing')"><span class="material-icons-outlined">receipt</span> My Billing</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLLAPSE TOGGLE -->
+        <div class="collapse-toggle" id="collapse-btn" onclick="toggleSubnav()" style="display:none;">
+          <span class="material-icons-outlined">chevron_left</span>
+        </div>
+      </div>
+
+      <!-- MAIN CONTENT -->
+      <div class="main">
+        <div class="topbar">
+          <div class="breadcrumb" id="breadcrumb"><span>Dashboard</span></div>
+          <div class="topbar-right">
+            <div class="topbar-btn"><span class="material-icons-outlined" style="font-size:18px">language</span></div>
+            <div class="topbar-btn"><span class="material-icons-outlined" style="font-size:18px">dark_mode</span></div>
+            <div class="topbar-btn"><span class="material-icons-outlined" style="font-size:18px">notifications</span></div>
+            <div class="avatar">AH</div>
+          </div>
+        </div>
+        <div class="content" id="content-area">
+          <div class="stat-grid">
+            <div class="stat-card"><div class="label">Active Couriers</div><div class="value">142</div></div>
+            <div class="stat-card"><div class="label">Monthly Revenue</div><div class="value">$48.2K</div></div>
+            <div class="stat-card"><div class="label">Pending Payouts</div><div class="value">23</div></div>
+          </div>
+          <div class="stat-grid">
+            <div class="stat-card"><div class="label">Active Employees</div><div class="value">38</div></div>
+            <div class="stat-card"><div class="label">Expenses This Month</div><div class="value">$8,420</div></div>
+            <div class="stat-card"><div class="label">Net Cashflow</div><div class="value" style="color:#059669">+$15.6K</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- VIEW 3: MOBILE                               -->
+<!-- ============================================ -->
+<div id="view-mobile" class="view-section">
+  <p class="section-desc" style="margin-top: 28px; margin-bottom: 0;">
+    On mobile, the icon rail becomes a <strong style="color:#60A5FA">bottom navigation bar</strong>. Tapping a category opens a <strong style="color:#60A5FA">bottom sheet</strong> with sub-items. Tapping Home goes directly to dashboard.
+  </p>
+
+  <div class="mobile-container">
+
+    <!-- PHONE 1: Default state (Dashboard) -->
+    <div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="m-topbar">
+            <div class="hamburger"><span class="material-icons-outlined">menu</span></div>
+            <div class="m-title">Dashboard</div>
+            <div class="m-avatar">AH</div>
+          </div>
+          <div class="m-content">
+            <div class="m-stat-grid" style="margin-bottom: 12px;">
+              <div class="m-stat-card"><div class="label">Active Couriers</div><div class="value">142</div></div>
+              <div class="m-stat-card"><div class="label">Revenue</div><div class="value">$48.2K</div></div>
+            </div>
+            <div class="m-stat-grid" style="margin-bottom: 12px;">
+              <div class="m-stat-card"><div class="label">Pending Payouts</div><div class="value">23</div></div>
+              <div class="m-stat-card"><div class="label">Employees</div><div class="value">38</div></div>
+            </div>
+            <div class="m-stat-grid">
+              <div class="m-stat-card"><div class="label">Expenses</div><div class="value">$8,420</div></div>
+              <div class="m-stat-card"><div class="label">Cashflow</div><div class="value" style="color:#059669">+$15.6K</div></div>
+            </div>
+          </div>
+          <div class="m-bottom-nav">
+            <div class="m-nav-item active">
+              <span class="material-icons-outlined">dashboard</span>
+              <span class="m-nav-label">Home</span>
+            </div>
+            <div class="m-nav-item">
+              <span class="material-icons-outlined">local_shipping</span>
+              <span class="m-nav-label">Operations</span>
+            </div>
+            <div class="m-nav-item">
+              <span class="material-icons-outlined">account_balance_wallet</span>
+              <span class="m-nav-label">Finance</span>
+            </div>
+            <div class="m-nav-item">
+              <span class="material-icons-outlined">badge</span>
+              <span class="m-nav-label">HR</span>
+            </div>
+            <div class="m-nav-item">
+              <span class="material-icons-outlined">more_horiz</span>
+              <span class="m-nav-label">More</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-label">Default State</div>
+      <div class="phone-sublabel">Bottom nav maps to rail categories. "More" holds Reports + Settings.</div>
+    </div>
+
+    <!-- PHONE 2: Bottom sheet open (Finance tapped) -->
+    <div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="m-topbar">
+            <div class="hamburger"><span class="material-icons-outlined">menu</span></div>
+            <div class="m-title">Finance</div>
+            <div class="m-avatar">AH</div>
+          </div>
+          <div class="m-content" style="opacity: 0.3;">
+            <div class="m-stat-grid">
+              <div class="m-stat-card"><div class="label">Total Payroll</div><div class="value">$24.8K</div></div>
+              <div class="m-stat-card"><div class="label">Expenses</div><div class="value">$8,420</div></div>
+            </div>
+          </div>
+
+          <!-- Overlay -->
+          <div class="m-sheet-overlay active" style="pointer-events:none;"></div>
+
+          <!-- Bottom Sheet -->
+          <div class="m-sheet active">
+            <div class="m-sheet-handle"></div>
+            <div class="m-sheet-header">
+              <h3>Finance</h3>
+              <div class="subtitle">Payments, expenses & planning</div>
+            </div>
+            <div class="m-sheet-group-title">Payments</div>
+            <div class="m-sheet-item active">
+              <span class="material-icons-outlined">payments</span> Payroll
+            </div>
+            <div class="m-sheet-item">
+              <span class="material-icons-outlined">payment</span> Payments
+            </div>
+            <div class="m-sheet-divider"></div>
+            <div class="m-sheet-group-title">Expenses</div>
+            <div class="m-sheet-item">
+              <span class="material-icons-outlined">receipt_long</span> Courier Expenses
+            </div>
+            <div class="m-sheet-item">
+              <span class="material-icons-outlined">business_center</span> Op. Expenses
+            </div>
+            <div class="m-sheet-item">
+              <span class="material-icons-outlined">savings</span> Fee Deposits
+            </div>
+            <div class="m-sheet-divider"></div>
+            <div class="m-sheet-group-title">Planning</div>
+            <div class="m-sheet-item">
+              <span class="material-icons-outlined">account_balance_wallet</span> Cashflow
+            </div>
+            <div class="m-sheet-item">
+              <span class="material-icons-outlined">account_balance</span> Capital Management
+            </div>
+          </div>
+
+          <div class="m-bottom-nav" style="position:relative; z-index: 32;">
+            <div class="m-nav-item">
+              <span class="material-icons-outlined">dashboard</span>
+              <span class="m-nav-label">Home</span>
+            </div>
+            <div class="m-nav-item">
+              <span class="material-icons-outlined">local_shipping</span>
+              <span class="m-nav-label">Operations</span>
+            </div>
+            <div class="m-nav-item active">
+              <span class="material-icons-outlined">account_balance_wallet</span>
+              <span class="m-nav-label">Finance</span>
+            </div>
+            <div class="m-nav-item">
+              <span class="material-icons-outlined">badge</span>
+              <span class="m-nav-label">HR</span>
+            </div>
+            <div class="m-nav-item">
+              <span class="material-icons-outlined">more_horiz</span>
+              <span class="m-nav-label">More</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-label">Bottom Sheet Open</div>
+      <div class="phone-sublabel">Tap a category to see its sub-items. Same grouping as desktop. Tap item to navigate, sheet closes.</div>
+    </div>
+
+    <!-- PHONE 3: "More" menu -->
+    <div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="m-topbar">
+            <div class="hamburger"><span class="material-icons-outlined">menu</span></div>
+            <div class="m-title">More</div>
+            <div class="m-avatar">AH</div>
+          </div>
+          <div class="m-content" style="opacity: 0.3;"></div>
+
+          <div class="m-sheet-overlay active" style="pointer-events:none;"></div>
+
+          <div class="m-sheet active">
+            <div class="m-sheet-handle"></div>
+            <div class="m-sheet-header">
+              <h3>More</h3>
+              <div class="subtitle">Reports & settings</div>
+            </div>
+            <div class="m-sheet-group-title">Reports</div>
+            <div class="m-sheet-item">
+              <span class="material-icons-outlined">analytics</span> Reports
+            </div>
+            <div class="m-sheet-item">
+              <span class="material-icons-outlined">upload_file</span> Timesheet Uploads
+            </div>
+            <div class="m-sheet-item">
+              <span class="material-icons-outlined">track_changes</span> Financial Targets
+            </div>
+            <div class="m-sheet-item">
+              <span class="material-icons-outlined">insert_chart</span> Overhead Analytics
+            </div>
+            <div class="m-sheet-divider"></div>
+            <div class="m-sheet-group-title">Settings</div>
+            <div class="m-sheet-item">
+              <span class="material-icons-outlined">person_add</span> Users
+            </div>
+            <div class="m-sheet-item">
+              <span class="material-icons-outlined">admin_panel_settings</span> Permissions
+            </div>
+            <div class="m-sheet-item">
+              <span class="material-icons-outlined">card_membership</span> My Subscription
+            </div>
+            <div class="m-sheet-item">
+              <span class="material-icons-outlined">receipt</span> My Billing
+            </div>
+          </div>
+
+          <div class="m-bottom-nav" style="position:relative; z-index: 32;">
+            <div class="m-nav-item">
+              <span class="material-icons-outlined">dashboard</span>
+              <span class="m-nav-label">Home</span>
+            </div>
+            <div class="m-nav-item">
+              <span class="material-icons-outlined">local_shipping</span>
+              <span class="m-nav-label">Operations</span>
+            </div>
+            <div class="m-nav-item">
+              <span class="material-icons-outlined">account_balance_wallet</span>
+              <span class="m-nav-label">Finance</span>
+            </div>
+            <div class="m-nav-item">
+              <span class="material-icons-outlined">badge</span>
+              <span class="m-nav-label">HR</span>
+            </div>
+            <div class="m-nav-item active">
+              <span class="material-icons-outlined">more_horiz</span>
+              <span class="m-nav-label">More</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-label">"More" Menu</div>
+      <div class="phone-sublabel">Reports + Settings combined into "More" since bottom nav only fits 5 items.</div>
+    </div>
+
+  </div>
+
+  <!-- Mobile behavior explanation -->
+  <div style="max-width: 900px; margin: 0 auto 60px; padding: 0 40px;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="callout">
+        <h4>Navigation Flow</h4>
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text"><strong>Home</strong> goes directly to dashboard (no sheet)</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text"><strong>Operations / Finance / HR</strong> open bottom sheet with sub-items and group headers</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text"><strong>More</strong> opens sheet combining Reports + Settings sections</div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-text">Tapping an item <strong>navigates + closes sheet</strong>. Tapping outside or swiping down dismisses.</div>
+        </div>
+      </div>
+      <div class="callout">
+        <h4>Bottom Nav Mapping</h4>
+        <ul>
+          <li><strong>Home</strong> = Dashboard (direct)</li>
+          <li><strong>Operations</strong> = Fleet + Insurance</li>
+          <li><strong>Finance</strong> = Payments + Expenses + Planning</li>
+          <li><strong>HR</strong> = Employees + Leave + Roles + Docs</li>
+          <li><strong>More</strong> = Reports + Settings (overflow)</li>
+        </ul>
+        <p style="margin-top: 12px; font-size: 12px; color: #64748B;">
+          Bottom nav limited to 5 items per Material Design guidelines. Reports + Settings are less frequent, so they share "More".
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let subnavCollapsed = false;
+
+  function showView(id) {
+    document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('view-' + id).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function switchRail(el) {
+    const tab = el.dataset.tab;
+    document.querySelectorAll('.rail-item').forEach(r => r.classList.remove('active'));
+    el.classList.add('active');
+
+    document.querySelectorAll('.subnav').forEach(s => s.classList.remove('active'));
+
+    const subnav = document.getElementById('subnav-' + tab);
+    const btn = document.getElementById('collapse-btn');
+
+    if (subnav) {
+      subnav.classList.add('active');
+      if (subnavCollapsed) subnav.classList.add('collapsed');
+      else subnav.classList.remove('collapsed');
+      btn.style.display = 'flex';
+
+      const firstItem = subnav.querySelector('.subnav-item.active') || subnav.querySelector('.subnav-item');
+      if (firstItem) firstItem.click();
+    } else {
+      btn.style.display = 'none';
+      document.getElementById('breadcrumb').innerHTML = '<span>Dashboard</span>';
+      document.getElementById('url-bar').textContent = 'app.3pl-management.com/admin/dashboard';
+    }
+  }
+
+  function toggleSubnav() {
+    const btn = document.getElementById('collapse-btn');
+    const activeSubnav = document.querySelector('.subnav.active');
+
+    subnavCollapsed = !subnavCollapsed;
+
+    if (activeSubnav) {
+      if (subnavCollapsed) {
+        activeSubnav.classList.add('collapsed');
+        btn.classList.add('is-collapsed');
+      } else {
+        activeSubnav.classList.remove('collapsed');
+        btn.classList.remove('is-collapsed');
+      }
+    }
+  }
+
+  function selectSubnav(el, label, path) {
+    el.closest('.subnav').querySelectorAll('.subnav-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+
+    const railTab = document.querySelector('.rail-item.active .r-label');
+    const category = railTab ? railTab.textContent : '';
+    document.getElementById('breadcrumb').innerHTML = category + ' &rsaquo; <span>' + label + '</span>';
+    document.getElementById('url-bar').textContent = 'app.3pl-management.com' + path;
+  }
+</script>
+
+</body>
+</html>
