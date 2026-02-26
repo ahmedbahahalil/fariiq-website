@@ -1,0 +1,13 @@
+# OS files
+.DS_Store
+
+# Development mockups
+mockups/
+
+# Dependencies
+node_modules/
+
+# IDE
+.claude/
+.vscode/
+.idea/
