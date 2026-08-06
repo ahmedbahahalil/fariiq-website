@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fariiq — product overview</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800&family=Noto+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0a0a0a; overflow: hidden; }
+  </style>
+</helmet>
+<x-import component="FariiqVideo" from="./fariiq_video.jsx" hint-size="100%,100%" style="position:fixed; inset:0;"></x-import>
+</x-dc>
+<script>
+(function () {
+  var DICT = {"Short":"نقص","Approved & ready for the bank file.":"معتمد وجاهز لملف البنك.","Recruitment, reconciliation & payroll that used to take":"التوظيف والمطابقة والرواتب التي كانت تستغرق","Talabat · Deliveroo · HungerStation · Careem · Keeta — pickup-dropoff, flat & hourly":"طلبات · دليفرو · هنقرستيشن · كريم · كيتا — استلام وتسليم، ثابت وبالساعة","Revenue, cost & margin per platform · this cycle":"الإيراد والتكلفة والهامش لكل منصة · هذه الدورة","Vehicles, devices & gear — assignments, deposits & insurance":"المركبات والأجهزة والعُدد — التسليم والودائع والتأمين","Cycle: 1–15 Jan 2026 · bi-weekly":"الدورة: 1–15 يناير 2026 · نصف شهرية","across":"لـ","couriers · 6 platforms":"مندوبًا · 6 منصات","Delivery phone · #PH-0421":"هاتف التوصيل · #PH-0421","Thermal bag · #BG-2290":"حافظة حرارية · #BG-2290","Motorbike · DXB J-1234":"دراجة نارية · DXB J-1234","Motorbike · DXB L-4407":"دراجة نارية · DXB L-4407","E-scooter · DXB K-9921":"سكوتر كهربائي · DXB K-9921","Dhaka → Dubai":"دكا ← دبي","Deliveroo #DR-8842":"دليفرو #DR-8842","Talabat #2449595":"طلبات #2449595","AED":"د.إ","SAR":"ر.س","BHD":"د.ب","KWD":"د.ك","QAR":"ر.ق","OMR":"ر.ع","P&L":"الأرباح والخسائر","MARGIN":"الهامش","INPUT":"المُدخل","Gov ID 784-1990-xxxxxx · Motorbike · Recruited from":"هوية 784-1990-xxxxxx · دراجة نارية · وُظّف من","couriers · 6 platforms":"مندوب · 6 منصات","Couriers checked":"مندوبون تم فحصهم","Running a delivery fleet":"إدارة أسطول توصيل","is a thousand moving parts.":"تعني ألف تفصيل متحرك.","One platform, from recruitment to reconciliation.":"منصة واحدة، من التوظيف إلى المطابقة.","EVERY PLATFORM. EVERY PAY MODEL. EVERY WEEK.":"كل المنصات. كل أنماط الأجور. كل أسبوع.","Talabat · Deliveroo · HungerStation · Careem · Keeta — pickup-dropoff, flat &amp; hourly":"طلبات · دليفرو · هنقرستيشن · كريم · كيتا — استلام وتسليم، ثابت وبالساعة","STEP 01 · COURIERS":"الخطوة 01 · المندوبون","STEP 02 · UPLOAD":"الخطوة 02 · الرفع","STEP 03 · RECONCILE":"الخطوة 03 · المطابقة","STEP 04 · PAYOUTS":"الخطوة 04 · المستحقات","STEP 05 · EQUIPMENT":"الخطوة 05 · الأصول","STEP 06 · PROFITABILITY":"الخطوة 06 · الربحية","Track every courier from recruitment in their home country to final exit.":"تابع كل مندوب من التوظيف في بلده حتى إنهاء الخدمة.","Drop in raw exports from any delivery platform.":"أضف الملفات الخام من أي منصة توصيل.","Every payment checked against your rate cards — automatically.":"كل دفعة تُراجع مقابل جداول أسعارك — تلقائيًا.","Accurate courier payouts, ready in one click.":"مستحقات دقيقة للمندوبين، جاهزة بنقرة واحدة.","Assign and track every vehicle, device and bag — deposits and insurance included.":"سلّم وتابع كل مركبة وجهاز وحافظة — مع الودائع والتأمين.","See your true margin on every platform.":"اعرف هامش ربحك الحقيقي على كل منصة.","Recruitment, reconciliation &amp; payroll that used to take":"التوظيف والمطابقة والرواتب التي كانت تستغرق","days":"أيامًا","minutes":"دقائق","Book a demo at":"احجز عرضًا على","One master record per courier — from recruitment to final exit":"سجل واحد لكل مندوب — من التوظيف حتى إنهاء الخدمة","Courier profile":"ملف المندوب","Recruiting":"التوظيف","Onboarding":"الإلحاق","Recruited":"تم التوظيف","Home country":"البلد الأم","Visa & docs":"التأشيرة والمستندات","Processing":"قيد المعالجة","Onboarded":"مُلحق","In-country":"داخل الدولة","Active":"نشط","Deployed":"في الخدمة","Offboarded":"منتهي الخدمة","Exit & clearance":"الخروج والمخالصة","Cleared · departed":"مُخالص · غادر","Couriers":"المندوبون","Dashboard":"لوحة التحكم","Upload":"الرفع","Reconciliation":"المطابقة","Payouts":"المستحقات","Equipment":"الأصول","Upload timesheets":"رفع كشوف العمل","Drop platform CSVs to import":"أضف ملفات المنصات للاستيراد","Import raw rider exports — we map the columns for you":"استورد ملفات المندوبين الخام — ونحن نطابق الأعمدة لك","Platform payments vs. your configured rate cards":"مدفوعات المنصة مقابل جداول أسعارك المُعدّة","Couriers checked":"مندوبون تم فحصهم","Discrepancies caught":"فروقات مكتشفة","Matched":"مطابق","System rate":"سعر النظام","Platform paid":"دفعته المنصة","Total payout this cycle":"إجمالي المستحقات لهذه الدورة","Approved &amp; ready for the bank file.":"معتمد وجاهز لملف البنك.","Approved":"معتمد","Generate payout file":"إنشاء ملف الصرف","Payout file exported":"تم تصدير ملف الصرف","Assigned to":"مُسلَّم إلى","Assigned":"مُسلَّم","Available":"متاح","In maintenance":"في الصيانة","Total assets":"إجمالي الأصول","Deposit":"الوديعة","Vehicle":"مركبة","Device":"جهاز","Gear":"عُدد","Asset":"الأصل","Type":"النوع","Status":"الحالة","Platform P&L":"أرباح وخسائر المنصة","Platform":"المنصة","Revenue":"الإيراد","Courier cost":"تكلفة المندوبين","Total cost":"إجمالي التكلفة","Total revenue":"إجمالي الإيراد","Blended margin":"الهامش المجمّع","Orders":"الطلبات","Courier":"المندوب","Home":"الرئيسية","Talabat":"طلبات","Deliveroo":"دليفرو","HungerStation":"هنقرستيشن","Careem":"كريم","Keeta":"كيتا","Mrsool":"مرسول","Talabat · Deliveroo":"طلبات · دليفرو","Talabat · Keeta":"طلبات · كيتا","AED · UAE":"د.إ · الإمارات","Dubai, UAE":"دبي، الإمارات","Kathmandu, Nepal":"كاتماندو، نيبال","Lahore, Pakistan":"لاهور، باكستان","Motorbike":"دراجة نارية","E-scooter":"سكوتر كهربائي","Ahmed Khan":"أحمد خان","Mohammed Ali":"محمد علي","Omar Farouk":"عمر فاروق","Priya Nair":"بريا نايار","Rahul Sharma":"راهول شارما","Arman Hossain":"أرمان حسين","Bishnu Rai":"بيشنو راي","Sunil Thapa":"سونيل ثابا","Jay Patel":"جاي باتيل","Play/pause (space)":"تشغيل / إيقاف (مسافة)","Return to start (0)":"العودة إلى البداية (0)"};
+  var KEY = 'fariiq_wt_lang';
+  // Embed options. The homepage drops this page into an iframe and drives the
+  // language from the site's own switch, so it asks for the in-frame pill to be
+  // hidden and passes the starting language in the URL.
+  var PARAMS = new URLSearchParams(location.search);
+  var HIDE_TOGGLE = PARAMS.get('hideToggle') === '1';
+  // The animation remembers its playhead across visits. On the homepage that
+  // would open the section on the closing frame, so the embed asks for a reset.
+  // This runs while the document is still parsing, before the stage mounts.
+  if (PARAMS.get('restart') === '1') {
+    try { localStorage.removeItem('fariiq-demo:t'); } catch (e) {}
+  }
+  var lang = 'en';
+  try { lang = localStorage.getItem(KEY) || 'en'; } catch (e) {}
+  if (PARAMS.get('lang') === 'en' || PARAMS.get('lang') === 'ar') lang = PARAMS.get('lang');
+  function toAr(s) {
+    var t = s.trim();
+    if (!t) return s;
+    var i = s.indexOf(t.charAt(0));
+    var lead = i > 0 ? s.slice(0, i) : '';
+    var tail = s.slice(lead.length + t.length);
+    var v = DICT[t];
+    if (v === undefined) {
+      v = t.replace(/\bAED\b/g, 'د.إ').replace(/\u2192/g, '\u2190');
+      var m = t.match(/^([\d,]+) couriers · (\d+) platforms$/);
+      if (m) v = m[1] + ' مندوب · ' + m[2] + ' منصات';
+    }
+    return lead + v + tail;
+  }
+  var obs = null;
+  var canvasEl = null;
+  function apply() {
+    if (obs) obs.disconnect();
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        var p = n.parentNode;
+        if (!p) return NodeFilter.FILTER_REJECT;
+        if (p.nodeName === 'SCRIPT' || p.nodeName === 'STYLE') return NodeFilter.FILTER_REJECT;
+        if (p.closest && p.closest('[data-lang-ui]')) return NodeFilter.FILTER_REJECT;
+        return n.nodeValue && n.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    var n, nodes = [];
+    while ((n = w.nextNode())) nodes.push(n);
+    nodes.forEach(function (node) {
+      // Re-capture whenever React rewrote the node since our last write, so a
+      // reused text node picking up new copy is not overwritten with a stale
+      // translation. node.__ar is the last value THIS runtime wrote.
+      if (node.__ar === undefined || node.nodeValue !== node.__ar) node.__en = node.nodeValue;
+      var target = lang === 'ar' ? toAr(node.__en) : node.__en;
+      node.__ar = target;
+      if (node.nodeValue !== target) node.nodeValue = target;
+    });
+    // Text-only localisation: the animation is laid out on a fixed pixel canvas,
+    // so the document direction is deliberately NOT flipped.
+    document.documentElement.lang = lang;
+    document.body.classList.toggle('ar', lang === 'ar');
+    // Mirror the animation itself. The scenes are flex-based, so flipping the
+    // canvas direction mirrors the composition; logical insets in the scene
+    // source handle the few absolutely-placed pieces.
+    if (!canvasEl || !canvasEl.isConnected) canvasEl = document.querySelector('[data-fq-canvas]');
+    if (canvasEl) canvasEl.style.direction = lang === 'ar' ? 'rtl' : 'ltr';
+    var b = document.getElementById('langToggle');
+    if (b) b.textContent = lang === 'ar' ? 'English' : 'العربية';
+    if (obs) obs.observe(document.body, { childList: true, subtree: true, characterData: true });
+  }
+  function mount() {
+    var l = document.createElement('link');
+    l.rel = 'stylesheet';
+    l.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap';
+    document.head.appendChild(l);
+    var s = document.createElement('style');
+    s.textContent = 'body.ar, body.ar * { font-family: "Noto Sans Arabic", "Noto Sans", system-ui, sans-serif !important; letter-spacing: normal !important; }' +
+      'body.ar .fq-dir-arrow { transform: scaleX(-1); }' +
+      '#langToggle { position: fixed; inset-block-end: 18px; inset-inline-start: 18px; z-index: 99999;' +
+      ' background: rgba(46,52,69,0.92); color: #FDF8F0; border: 1px solid rgba(253,248,240,0.25); border-radius: 999px;' +
+      ' padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer;' +
+      ' font-family: "Noto Sans Arabic", "Noto Sans", system-ui, sans-serif; }';
+    document.head.appendChild(s);
+    if (!HIDE_TOGGLE) {
+      var btn = document.createElement('button');
+      btn.id = 'langToggle';
+      btn.setAttribute('data-lang-ui', '');
+      btn.setAttribute('aria-label', 'Switch language');
+      btn.onclick = function () {
+        lang = lang === 'ar' ? 'en' : 'ar';
+        try { localStorage.setItem(KEY, lang); } catch (e) {}
+        apply();
+      };
+      document.body.appendChild(btn);
+    }
+    // Follow the host page's language switch without reloading, so the
+    // animation keeps playing through a switch. The parent posts the message;
+    // the storage event is the fallback for any other tab on the site.
+    function setLang(next) {
+      if ((next !== 'en' && next !== 'ar') || next === lang) return;
+      lang = next;
+      apply();
+    }
+    window.addEventListener('message', function (e) {
+      if (e.data && e.data.type === 'fariiq-lang') setLang(e.data.lang);
+    });
+    window.addEventListener('storage', function (e) {
+      if (e.key === KEY) setLang(e.newValue);
+    });
+    (function tick() { apply(); requestAnimationFrame(tick); })();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);
+  else mount();
+})();
+</script>
+</body>
+</html>

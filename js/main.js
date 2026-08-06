@@ -224,6 +224,60 @@
   }
 
   // ========================================
+  // Demo Video
+  // ========================================
+  // The overview is an HTML animation in an iframe, loaded with autoplay off.
+  // It starts the first time the whole frame is on screen, so a visitor never
+  // finds it already halfway through, and never plays it half out of view.
+  function initDemoVideo() {
+    const frame = document.getElementById('demoVideo');
+    if (!frame) return;
+
+    let started = false;
+    let ready = false;
+
+    // Fully visible, or filling the viewport top to bottom on a screen too
+    // short to show the whole frame at once.
+    function fullyInView() {
+      const r = frame.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      if (r.height === 0) return false;
+      return r.height <= vh ? r.top >= 0 && r.bottom <= vh : r.top <= 0 && r.bottom >= vh;
+    }
+
+    function play() {
+      if (started || !ready || !fullyInView()) return;
+      started = true;
+      frame.contentWindow.postMessage({ type: 'fariiq-play' }, window.location.origin);
+      window.removeEventListener('scroll', check);
+      window.removeEventListener('resize', check);
+    }
+
+    let queued = false;
+    function check() {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        play();
+      });
+    }
+
+    // The iframe is lazy-loaded, so it tells us when it is listening rather
+    // than us guessing from the load event.
+    window.addEventListener('message', (e) => {
+      if (e.origin !== window.location.origin) return;
+      if (e.data && e.data.type === 'fariiq-ready') {
+        ready = true;
+        check();
+      }
+    });
+
+    window.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check);
+  }
+
+  // ========================================
   // Initialize
   // ========================================
   function init() {
@@ -231,6 +285,7 @@
     initContactForm();
     initAnimations();
     initCTATracking();
+    initDemoVideo();
   }
 
   // Run on DOM ready

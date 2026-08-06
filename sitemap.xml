@@ -6,4 +6,16 @@
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
+  <url><loc>https://www.fariiq.com/walkthroughs/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.fariiq.com/walkthroughs/launch-pad.html</loc><priority>0.6</priority></url>
+  <url><loc>https://www.fariiq.com/walkthroughs/dashboard.html</loc><priority>0.6</priority></url>
+  <url><loc>https://www.fariiq.com/walkthroughs/couriers.html</loc><priority>0.6</priority></url>
+  <url><loc>https://www.fariiq.com/walkthroughs/timesheet-upload.html</loc><priority>0.6</priority></url>
+  <url><loc>https://www.fariiq.com/walkthroughs/reconciliation.html</loc><priority>0.6</priority></url>
+  <url><loc>https://www.fariiq.com/walkthroughs/payroll.html</loc><priority>0.6</priority></url>
+  <url><loc>https://www.fariiq.com/walkthroughs/finance.html</loc><priority>0.6</priority></url>
+  <url><loc>https://www.fariiq.com/walkthroughs/equipment.html</loc><priority>0.6</priority></url>
+  <url><loc>https://www.fariiq.com/walkthroughs/insurance.html</loc><priority>0.6</priority></url>
+  <url><loc>https://www.fariiq.com/walkthroughs/compliance.html</loc><priority>0.6</priority></url>
+  <url><loc>https://www.fariiq.com/walkthroughs/users-and-roles.html</loc><priority>0.6</priority></url>
 </urlset>

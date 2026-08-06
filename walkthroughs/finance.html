@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finance, P&L & cashflow walkthrough — Fariiq</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&display=block" rel="stylesheet">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #EDE6D8; overflow: hidden; font-family: 'Noto Sans', system-ui, sans-serif; }
+    a { color: #9C7E52; } a:hover { color: #B8996F; }
+    @keyframes ringPulse { 0% { outline-offset: 3px; } 50% { outline-offset: 7px; } 100% { outline-offset: 3px; } }
+    @keyframes tipIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</helmet>
+<div style="position:fixed; inset:0; display:flex; flex-direction:column;">
+  <div style="height:60px; flex:none; background:#2E3445; display:flex; align-items:center; gap:20px; padding:0 20px; color:#FDF8F0;">
+    <a href="index.html" style="display:flex; align-items:center; gap:6px; text-decoration:none; color:#E7D9C2; font-size:13px; font-weight:600;"><span style="font-family:'Material Symbols Outlined'; font-size:17px;">arrow_back</span>All walkthroughs</a>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <img src="assets/fariiq_mark.svg" alt="" style="height:24px; width:24px;">
+      <span style="font-weight:700; font-size:15px;">Finance — P&amp;L &amp; Cashflow</span>
+    </div>
+    <div style="flex:1;"></div>
+    <span style="font-size:12px; color:#A3B1C6;">Click the highlights, or step with Next / Back</span>
+    <span style="font-size:13px; font-variant-numeric:tabular-nums; color:#E7D9C2;">{{ progress }}</span>
+    <button onClick="{{ restart }}" style="display:flex; align-items:center; gap:6px; background:#B8996F; color:#fff; border:none; border-radius:8px; padding:7px 14px; font-family:'Noto Sans',sans-serif; font-size:13px; font-weight:600; cursor:pointer;">
+      <span style="font-family:'Material Symbols Outlined'; font-size:16px;">replay</span>Restart
+    </button>
+  </div>
+  <div data-viewport="1" style="flex:1; position:relative; overflow:hidden;">
+    <div data-stage="1" style="{{ stageStyle }}">
+      <div style="position:absolute; inset:0; display:flex; background:#FDF8F0;">
+        <div style="width:236px; flex:none; background:#F5F0E8; border-right:1px solid #E5DDD0; display:flex; flex-direction:column; padding:16px 10px; gap:2px;">
+          <div style="display:flex; align-items:center; gap:10px; padding:6px 12px 18px;">
+            <img src="assets/fariiq_mark.svg" alt="" style="height:26px; width:26px;">
+            <span style="font-weight:800; font-size:19px; color:#3D4552; letter-spacing:-0.02em;">Fariiq</span>
+          </div>
+          <sc-for list="{{ navItems }}" as="nv" hint-placeholder-count="8">
+            <div data-tgt="{{ nv.tgt }}" onClick="{{ nv.onTap }}" style="{{ nv.style }}">
+              <span style="font-family:'Material Symbols Outlined'; font-size:20px;">{{ nv.icon }}</span>
+              <span style="font-size:13.5px; font-weight:{{ nv.weight }};">{{ nv.label }}</span>
+            </div>
+          </sc-for>
+          <div style="flex:1;"></div>
+          <div style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-top:1px solid #E5DDD0;">
+            <div style="width:30px; height:30px; border-radius:50%; background:#B8996F; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;">SA</div>
+            <div style="display:flex; flex-direction:column;">
+              <span style="font-size:12.5px; font-weight:600; color:#3D4552;">Speedy Delivery</span>
+              <span style="font-size:11px; color:#6B7280;">Admin</span>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; min-width:0; padding:24px 32px; overflow:hidden; gap:14px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:24px; font-weight:600; color:#3D4552; flex:1;">Cashflow</span>
+            <div style="display:flex; gap:18px; border:1px solid #E5DDD0; border-radius:10px; padding:4px;">
+              <div style="{{ tabSummary }}">Summary</div>
+              <div data-tgt="forecastTab" onClick="{{ tapForecastTab }}" style="{{ tabForecast }}">Forecast</div>
+            </div>
+            <div data-tgt="periodSel" onClick="{{ tapPeriodSel }}" style="display:flex; align-items:center; gap:7px; border:1.5px solid #B8996F; background:#FBF6EE; border-radius:10px; padding:8px 14px; font-size:13px; font-weight:600; color:#9C7E52;">
+              <span style="font-family:'Material Symbols Outlined'; font-size:17px;">calendar_month</span>Last 6 months
+              <span style="font-family:'Material Symbols Outlined'; font-size:17px;">arrow_drop_down</span>
+            </div>
+          </div>
+          <div data-tgt="sumCards" onClick="{{ tapSumCards }}" style="display:flex; gap:14px;">
+            <sc-for list="{{ sums }}" as="s" hint-placeholder-count="4">
+              <div style="flex:1; background:#fff; border:1px solid #E5DDD0; border-radius:14px; padding:13px 16px; display:flex; flex-direction:column; gap:4px;">
+                <div style="display:flex; align-items:center; gap:7px;">
+                  <span style="font-family:'Material Symbols Outlined'; font-size:17px; color:{{ s.color }};">{{ s.icon }}</span>
+                  <span style="font-size:11.5px; color:#6B7280;">{{ s.label }}</span>
+                </div>
+                <span style="font-size:19px; font-weight:700; color:{{ s.color }}; font-variant-numeric:tabular-nums;">{{ s.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div data-tgt="chart" onClick="{{ tapChart }}" style="background:#fff; border:1px solid #E5DDD0; border-radius:16px; padding:18px 22px; display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; align-items:center; gap:14px;">
+              <span style="font-size:14px; font-weight:700; color:#3D4552; flex:1;">{{ chartTitle }}</span>
+              <div style="display:flex; align-items:center; gap:6px; font-size:11.5px; color:#6B7280;"><div style="width:10px; height:10px; border-radius:3px; background:#3E9B6C;"></div>Inflows</div>
+              <div style="display:flex; align-items:center; gap:6px; font-size:11.5px; color:#6B7280;"><div style="width:10px; height:10px; border-radius:3px; background:#C25A4C;"></div>Outflows</div>
+            </div>
+            <div style="display:flex; align-items:flex-end; gap:18px; height:190px; padding:0 6px;">
+              <sc-for list="{{ bars }}" as="b" hint-placeholder-count="6">
+                <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; height:100%; justify-content:flex-end; opacity:{{ b.opacity }};">
+                  <div style="display:flex; gap:5px; align-items:flex-end; width:100%; justify-content:center;">
+                    <div style="width:26px; height:{{ b.inH }}px; background:#3E9B6C; border-radius:5px 5px 0 0;"></div>
+                    <div style="width:26px; height:{{ b.outH }}px; background:#C25A4C; border-radius:5px 5px 0 0;"></div>
+                  </div>
+                  <span style="font-size:11px; color:#6B7280;">{{ b.label }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:flex; gap:14px;">
+            <div data-tgt="expenseBreak" onClick="{{ tapExpense }}" style="flex:1; background:#fff; border:1px solid #E5DDD0; border-radius:16px; padding:16px 20px; display:flex; flex-direction:column; gap:9px;">
+              <span style="font-size:13.5px; font-weight:700; color:#3D4552;">Expense breakdown — July</span>
+              <sc-for list="{{ expRows }}" as="e" hint-placeholder-count="4">
+                <div style="display:flex; align-items:center; gap:10px; font-size:12.5px;">
+                  <span style="color:#6B7280; width:150px;">{{ e.label }}</span>
+                  <div style="flex:1; height:8px; background:#F2ECE0; border-radius:999px; overflow:hidden;"><div style="height:100%; width:{{ e.w }}; background:#B8996F; border-radius:999px;"></div></div>
+                  <span style="font-weight:600; color:#3D4552; font-variant-numeric:tabular-nums; width:92px; text-align:right;">{{ e.value }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div data-tgt="pnl" onClick="{{ tapPnl }}" style="flex:1; background:#fff; border:1px solid #E5DDD0; border-radius:16px; padding:16px 20px; display:flex; flex-direction:column; gap:8px;">
+              <span style="font-size:13.5px; font-weight:700; color:#3D4552;">P&amp;L — July 2026</span>
+              <sc-for list="{{ pnlRows }}" as="p" hint-placeholder-count="5">
+                <div style="display:flex; justify-content:space-between; font-size:12.5px; border-top:{{ p.border }}; padding-top:{{ p.pt }};">
+                  <span style="color:{{ p.lc }}; font-weight:{{ p.weight }};">{{ p.label }}</span>
+                  <span style="color:{{ p.vc }}; font-weight:{{ p.weight }}; font-variant-numeric:tabular-nums;">{{ p.value }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+      <sc-if value="{{ hasRect }}" hint-placeholder-val="{{ false }}"><div style="{{ ringStyle }}"></div></sc-if>
+      <sc-if value="{{ hasRect }}" hint-placeholder-val="{{ false }}">
+        <div style="{{ tipStyle }}">
+          <div style="font-size:11px; font-weight:700; letter-spacing:0.08em; color:#9C7E52; text-transform:uppercase;">{{ progress }}</div>
+          <div style="font-size:14px; line-height:1.5; color:#2E3445; margin-top:6px;">{{ caption }}</div>
+          <div style="margin-top:12px; display:flex; align-items:center; gap:8px;">
+            <sc-if value="{{ showHint }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600; color:#9C7E52; flex:1;">
+                <span style="font-family:'Material Symbols Outlined'; font-size:15px;">touch_app</span>Click the highlight, or use Next
+              </div>
+            </sc-if>
+            <sc-if value="{{ isLast }}" hint-placeholder-val="{{ false }}"><div style="flex:1;"></div></sc-if>
+            <sc-if value="{{ isLast }}" hint-placeholder-val="{{ false }}">
+              <a href="index.html" style="flex:none; white-space:nowrap; border:1.5px solid #B8996F; background:#fff; color:#9C7E52; border-radius:8px; padding:7px 14px; font-size:12.5px; font-weight:600; text-decoration:none;">All walkthroughs</a>
+            </sc-if>
+            <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ goBack }}" style="flex:none; white-space:nowrap; border:1.5px solid #E5DDD0; background:#fff; color:#6B7280; border-radius:8px; padding:7px 14px; font-family:'Noto Sans',sans-serif; font-size:12.5px; font-weight:600; cursor:pointer;">Back</button>
+            </sc-if>
+            <button onClick="{{ goNext }}" style="flex:none; white-space:nowrap; border:none; background:#B8996F; color:#fff; border-radius:8px; padding:7px 16px; font-family:'Noto Sans',sans-serif; font-size:12.5px; font-weight:600; cursor:pointer;">{{ tourNextLabel }}</button>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { beat: 0, rect: null, vp: { w: 1440, h: 900 } };
+  timers = [];
+  BEATS = [
+    { t: 'navFin', x: 'Finance pulls everything together: cash position, expenses, revenue and profitability — all fed by your uploads and payroll runs.' },
+    { t: 'sumCards', x: 'The cashflow summary: current balance, total inflows, total outflows and net movement for the period.' },
+    { t: 'periodSel', x: 'Analyze any period — weeks, months, or compare against the previous period.' },
+    { t: 'chart', x: 'The trend view shows inflows against outflows month by month. Click any month to drill into its line-item transactions.' },
+    { t: 'forecastTab', x: 'The Forecast tab projects your cash position forward\u2026' },
+    { t: 'chart', x: '\u2026based on scheduled payouts, recurring expenses and expected platform revenue. Cash crunches show up before they happen.' },
+    { t: 'expenseBreak', x: 'Expenses break down by category — courier costs and company overheads side by side.' },
+    { t: 'pnl', x: 'And the P&L: revenue minus courier payouts minus overheads equals net profit. The same waterfall exists per courier in the Courier Ledger.' },
+  ];
+  componentDidMount() { this._ensureStarted(); }
+  componentWillUnmount() { window.removeEventListener('resize', this._onResize); this.timers.forEach(clearTimeout); }
+  _ensureStarted() {
+    if (this._booted) return;
+    this._booted = true;
+    this._onResize = () => { this.measureViewport(); this.measureTarget(); };
+    window.addEventListener('resize', this._onResize);
+    const tryStart = (n) => {
+      if (document.querySelector('[data-stage]') && document.querySelector('[data-viewport]') && document.querySelector('[data-tgt="' + this.BEATS[0].t + '"]')) { this.measureViewport(); this.setBeat(0); }
+      else if (n < 30) setTimeout(() => tryStart(n + 1), 300);
+    };
+    setTimeout(() => tryStart(0), 200);
+  }
+  measureViewport() { const el = document.querySelector('[data-viewport]'); if (el) this.setState({ vp: { w: el.clientWidth, h: el.clientHeight } }); }
+  measureTarget() {
+    const stage = document.querySelector('[data-stage]');
+    const el = document.querySelector('[data-tgt="' + this.BEATS[this.state.beat].t + '"]');
+    if (!stage || !el) { if (this.state.rect) this.setState({ rect: null }); return; }
+    const sr = stage.getBoundingClientRect(); const s = sr.width / 1440; const r = el.getBoundingClientRect();
+    const rect = { x: (r.left - sr.left) / s, y: (r.top - sr.top) / s, w: r.width / s, h: r.height / s };
+    const o = this.state.rect;
+    if (!o || Math.abs(o.x - rect.x) > 1 || Math.abs(o.y - rect.y) > 1 || Math.abs(o.w - rect.w) > 1) this.setState({ rect });
+  }
+  setBeat(b) {
+    this.timers.forEach(clearTimeout); this.timers = [];
+    this.setState({ beat: b, rect: null });
+    this.timers.push(setTimeout(() => this.pollTarget(0), 20));
+  }
+  // Mirrors the resize path exactly: measureViewport's setState is what commits the
+  // render, then forceUpdate guarantees the new rect paints on the same attempt.
+  pollTarget(n) {
+    if (this.state.rect) return;
+    this.measureViewport();
+    this.measureTarget();
+    this.forceUpdate();
+    if (n < 60) this.timers.push(setTimeout(() => this.pollTarget(n + 1), 16));
+  }
+  advance() { if (this.state.beat < this.BEATS.length - 1) this.setBeat(this.state.beat + 1); }
+  tap(id) { if (this.BEATS[this.state.beat].t === id) this.advance(); }
+
+  renderVals() {
+    if (!this._booted) setTimeout(() => this._ensureStarted(), 0);
+    const { beat, rect, vp } = this.state;
+    const N = this.BEATS.length;
+    const scale = Math.min(vp.w / 1440, vp.h / 900) || 1;
+    const tap = (id) => () => this.tap(id);
+    const navDef = [
+      ['dashboard', 'Dashboard', false, null], ['analytics', 'Data & Reports', false, null],
+      ['people', 'Couriers', false, null], ['business', 'Platforms', false, null],
+      ['account_balance_wallet', 'Finance', true, 'navFin'], ['payments', 'Payroll', false, null],
+      ['inventory_2', 'Equipment', false, null], ['shield', 'Insurance', false, null],
+      ['verified_user', 'Compliance', false, null], ['settings', 'Settings', false, null],
+    ];
+    const navItems = navDef.map(([icon, label, active, tgt]) => ({
+      icon, label, tgt: tgt || undefined, onTap: tgt ? tap(tgt) : undefined, weight: active ? '700' : '500',
+      style: { display: 'flex', alignItems: 'center', gap: 12, padding: '9px 12px', borderRadius: 10, color: active ? '#9C7E52' : '#5F6B7C', background: active ? '#EFE5D4' : 'transparent', cursor: 'default' },
+    }));
+    const forecast = beat >= 5;
+    const tabS = (on) => ({ padding: '7px 16px', borderRadius: 7, fontSize: 12.5, fontWeight: 600, background: on ? '#B8996F' : 'transparent', color: on ? '#fff' : '#6B7280' });
+    const sums = [
+      { icon: 'account_balance', label: 'Current balance', value: 'AED 412,760', color: '#3D4552' },
+      { icon: 'arrow_downward', label: 'Inflows (6 mo)', value: 'AED 1,884,420', color: '#3E9B6C' },
+      { icon: 'arrow_upward', label: 'Outflows (6 mo)', value: 'AED 1,655,310', color: '#C25A4C' },
+      { icon: 'trending_up', label: 'Net movement', value: '+ AED 229,110', color: '#3E9B6C' },
+    ];
+    const histBars = [
+      { label: 'Feb', i: 130, o: 118 }, { label: 'Mar', i: 138, o: 121 }, { label: 'Apr', i: 132, o: 126 },
+      { label: 'May', i: 147, o: 129 }, { label: 'Jun', i: 152, o: 133 }, { label: 'Jul', i: 160, o: 138 },
+    ];
+    const fcBars = [
+      { label: 'Aug', i: 158, o: 140 }, { label: 'Sep', i: 163, o: 141 }, { label: 'Oct', i: 168, o: 145 },
+      { label: 'Nov', i: 172, o: 147 }, { label: 'Dec', i: 178, o: 150 }, { label: 'Jan', i: 181, o: 152 },
+    ];
+    const bars = (forecast ? fcBars : histBars).map(b => ({ label: b.label, inH: b.i, outH: b.o, opacity: forecast ? '0.85' : '1' }));
+    const expRows = [
+      { label: 'Courier payouts', value: 'AED 187,441', w: '100%' },
+      { label: 'Visa & compliance', value: 'AED 14,320', w: '8%' },
+      { label: 'Vehicle maintenance', value: 'AED 9,870', w: '6%' },
+      { label: 'Office & software', value: 'AED 7,240', w: '4%' },
+    ];
+    const pnlRows = [
+      { label: 'Platform revenue', value: 'AED 332,535', lc: '#6B7280', vc: '#3D4552', weight: '600', border: 'none', pt: 0 },
+      { label: 'Courier payouts', value: '− AED 268,900', lc: '#6B7280', vc: '#C25A4C', weight: '600', border: 'none', pt: 0 },
+      { label: 'Operating expenses', value: '− AED 31,430', lc: '#6B7280', vc: '#C25A4C', weight: '600', border: 'none', pt: 0 },
+      { label: 'VAT payable', value: '− AED 3,180', lc: '#6B7280', vc: '#C25A4C', weight: '600', border: 'none', pt: 0 },
+      { label: 'Net profit', value: 'AED 29,025', lc: '#3D4552', vc: '#3E9B6C', weight: '700', border: '1px solid #E5DDD0', pt: 8 },
+    ];
+    const pad = 6, hasRect = !!rect;
+    const ringStyle = hasRect ? { position: 'absolute', left: rect.x - pad, top: rect.y - pad, width: rect.w + pad * 2, height: rect.h + pad * 2, borderRadius: 12, outline: '3px solid #B8996F', pointerEvents: 'none', zIndex: 200, animation: 'ringPulse 1.6s ease-in-out infinite', boxShadow: '0 0 0 4000px rgba(46,52,69,0.32)' } : {};
+    let tipStyle = {};
+    if (hasRect) {
+      const tw = 320, below = rect.y + rect.h + 190 < 900;
+      const tx = Math.max(16, Math.min(rect.x + rect.w / 2 - tw / 2, 1440 - tw - 16));
+      tipStyle = { position: 'absolute', left: tx, width: tw, zIndex: 210, top: below ? rect.y + rect.h + pad + 14 : undefined, bottom: below ? undefined : 900 - rect.y + pad + 14, background: '#fff', borderRadius: 14, padding: '16px 18px', boxShadow: '0 10px 32px rgba(46,52,69,0.28)', animation: 'tipIn 0.25s ease-out both' };
+    }
+    return {
+      progress: (beat + 1) + ' / ' + N,
+      restart: () => this.setBeat(0),
+      stageStyle: { position: 'absolute', width: 1440, height: 900, left: '50%', top: '50%', transform: 'translate(-50%,-50%) scale(' + scale + ')', overflow: 'hidden', borderRadius: 6, boxShadow: '0 8px 40px rgba(46,52,69,0.2)', background: '#FDF8F0' },
+      navItems, sums, bars, expRows, pnlRows,
+      tabSummary: tabS(!forecast), tabForecast: tabS(forecast),
+      chartTitle: forecast ? 'Projected cashflow — next 6 months' : 'Cashflow trend — Feb to Jul 2026',
+      tapSumCards: tap('sumCards'), tapPeriodSel: tap('periodSel'), tapChart: tap('chart'),
+      tapForecastTab: tap('forecastTab'), tapExpense: tap('expenseBreak'), tapPnl: tap('pnl'),
+      hasRect, ringStyle, tipStyle, caption: this.BEATS[beat].x,
+      showBack: beat > 0, isLast: beat === N - 1, showHint: beat < N - 1,
+      goBack: () => { if (beat > 0) this.setBeat(beat - 1); },
+      goNext: () => { beat < N - 1 ? this.advance() : this.setBeat(0); },
+      tourNextLabel: beat < N - 1 ? 'Next' : 'Restart',
+    };
+  }
+}
+</script>
+<script>
+(function () {
+  var DICT = {"← Back to fariiq.com":"→ العودة إلى fariiq.com","Fariiq":"فريق","Speedy Delivery":"سبيدي دليفري","Admin":"مدير","SA":"س.أ","Talabat":"طلبات","Keeta":"كيتا","Careem":"كريم","Dashboard":"لوحة التحكم","Launch Pad":"لوحة الانطلاق","Data & Reports":"البيانات والتقارير","Data &amp; Reports":"البيانات والتقارير","Couriers":"المندوبون","Platforms":"المنصات","Finance":"المالية","Payroll":"الرواتب","Equipment":"الأصول","Insurance":"التأمين","Compliance":"الالتزام","Settings":"الإعدادات","Revenue Tracking":"تتبع الإيرادات","Fleet Overview":"نظرة عامة على الأسطول","All walkthroughs":"جميع الجولات","Click the highlights, or step with Next / Back":"انقر على العناصر المميّزة أو تنقّل بزرّي التالي والسابق","Click the highlight, or use Next":"انقر على العنصر المميّز أو اضغط التالي","Restart":"إعادة","Back":"السابق","Next":"التالي","Next.":"التالي.","Cancel":"إلغاء","Close":"إغلاق","Done":"تم","Review":"مراجعة","Apply":"تطبيق","Clear":"مسح","Select all":"تحديد الكل","Skip for now":"تخطٍّ الآن","End of walkthrough":"نهاية الجولة","· new":"· جديد","None":"لا شيء","Direct":"مباشر","Total":"الإجمالي","Summary":"ملخص","Forecast":"التوقعات","Reports":"التقارير","Performance":"الأداء","Uploads":"الملفات المرفوعة","Status":"الحالة","Type":"النوع","Role":"الدور","Rate":"السعر","Rates":"الأسعار","Premium":"القسط","Provider":"المزوّد","Coverage":"التغطية","Category":"الفئة","Column":"العمود","Operation":"العملية","Orders":"الطلبات","Tips":"الإكراميات","VAT":"ضريبة القيمة المضافة","Files":"الملفات","Country":"الدولة","Platform":"المنصة","Document":"المستند","Authority":"الجهة","Number":"الرقم","Expires":"ينتهي","User":"المستخدم","Email":"البريد الإلكتروني","Last active":"آخر نشاط","Earnings":"الأرباح","Deductions":"الخصومات","Reimburse":"المستردّات","Reimbursements":"المستردّات","Net payout":"الصافي المستحق","Net profit":"الربح الصافي","Variance":"الفرق","Outstanding":"المتبقي","Inflows":"التدفقات الداخلة","Outflows":"التدفقات الخارجة","Transport":"وسيلة النقل","City":"المدينة","Asset":"الأصل","Book value":"القيمة الدفترية","Assigned to":"مُسلَّم إلى","Serial / Plate":"الرقم التسلسلي / اللوحة","Insured entity":"الجهة المؤمَّنة","Courier":"المندوب","Courier ID":"معرّف المندوب","Courier Name":"اسم المندوب","Order Pay":"أجر الطلب","Distance Pay":"أجر المسافة","COD Deduction":"خصم التحصيل النقدي","Order Revenue":"إيراد الطلبات","Distance Revenue":"إيراد المسافة","Configuration":"الإعداد","Add":"إضافة","Subtract":"خصم","Inclusive 5%":"شامل 5%","No expiry":"بلا انتهاء","Company":"الشركة","Vehicle":"مركبة","Medical":"طبي","Liability":"مسؤولية","Tax":"ضريبي","Visa":"تأشيرة","Permit":"تصريح","Labour":"عمل","Passport":"جواز سفر","Trade License":"رخصة تجارية","Motorcycle":"دراجة نارية","Motorcycles":"الدراجات النارية","Car":"سيارة","Mobile Phones":"الهواتف المحمولة","Dubai":"دبي","Abu Dhabi":"أبوظبي","Sharjah":"الشارقة","Egypt":"مصر","United Arab Emirates":"الإمارات العربية المتحدة","Active":"نشط","Inactive":"غير نشط","Processing":"قيد المعالجة","Mobilized":"جاهز للعمل","Complete":"مكتمل","To do":"مطلوب","Valid":"سارٍ","Expiring":"قارب الانتهاء","Expired":"منتهٍ","Available":"متاح","Assigned":"مُسلَّم","In Maintenance":"في الصيانة","On Order":"قيد الشراء","Disposed":"مُستبعد","Draft":"مسودة","Approved":"معتمد","Processed":"مُنفَّذ","Reconciled":"مُطابَق","Shortfall":"نقص","Invited":"مدعو","Setup complete":"اكتملت التهيئة","Processed · just now":"مُنفَّذ · قبل لحظات","Jan":"يناير","Feb":"فبراير","Mar":"مارس","Apr":"أبريل","May":"مايو","Jun":"يونيو","Jul":"يوليو","Aug":"أغسطس","Sep":"سبتمبر","Oct":"أكتوبر","Nov":"نوفمبر","Dec":"ديسمبر","July":"يوليو","August 2026":"أغسطس 2026","August 2026 · AED":"أغسطس 2026 · د.إ","July 2026":"يوليو 2026","Jul 2026":"يوليو 2026","Aug 2027":"أغسطس 2027","Sep 2027":"سبتمبر 2027","Mar 2027":"مارس 2027","Jun 2027":"يونيو 2027","Nov 2027":"نوفمبر 2027","Jan 2027":"يناير 2027","Jul 2026 ":"يوليو 2026 ","28 Aug 2026":"28 أغسطس 2026","27 Aug 2027":"27 أغسطس 2027","14 Sep 2027":"14 سبتمبر 2027","Yesterday":"أمس","2 min ago":"قبل دقيقتين","1 hour ago":"قبل ساعة","3 days ago":"قبل 3 أيام","Payroll due Aug 5":"الرواتب تُصرف 5 أغسطس","Ahmed Hassan":"أحمد حسن","Mohammed Ali":"محمد علي","Rashid Khan":"راشد خان","Omar Farouk":"عمر فاروق","Imran Sheikh":"عمران شيخ","Khalid Mansour":"خالد منصور","Layla Haddad":"ليلى حداد","Sara Al Amin":"سارة الأمين","Yousef Rahman":"يوسف رحمان","Nadia Kassem":"نادية قاسم","Tarek Aziz":"طارق عزيز","Daman":"ضمان","AXA Gulf":"أكسا الخليج","Oman Insurance":"عمان للتأمين","Dubai Economy (DED)":"اقتصادية دبي","Federal Tax Authority":"الهيئة الاتحادية للضرائب","GDRFA Dubai":"إقامة دبي","Sharjah Municipality":"بلدية الشارقة","MOHRE":"وزارة الموارد البشرية","Learn Fariiq feature by feature":"تعرّف على فريق ميزة بميزة","Eleven interactive walkthroughs of the real product. Click through each one at your own pace — every screen is the actual interface, with the steps highlighted as you go.":"إحدى عشرة جولة تفاعلية داخل المنتج الفعلي. تنقّل في كل جولة بالسرعة التي تناسبك — كل شاشة هي الواجهة الحقيقية، والخطوات مميّزة أمامك خطوة بخطوة.","Click through at your own pace":"تنقّل بالسرعة التي تناسبك","8–28 steps each · 2–6 minutes":"من 8 إلى 28 خطوة · 2–6 دقائق","The real Fariiq interface":"واجهة فريق الحقيقية","Start here":"ابدأ من هنا","Getting your company set up":"تهيئة شركتك للعمل","Money in":"الإيرادات","From platform files to reconciled revenue":"من ملفات المنصات إلى إيرادات مُطابَقة","Money out":"المصروفات","Paying couriers and running the books":"صرف المستحقات وإدارة الحسابات","Keeping it running":"استمرارية التشغيل","Assets, cover, compliance and access":"الأصول والتأمين والالتزام والصلاحيات","Dashboard & Alerts":"لوحة التحكم والتنبيهات","Courier Management":"إدارة المندوبين","Timesheet Upload & Reports":"رفع كشوف العمل والتقارير","Timesheet Upload &amp; Reports":"رفع كشوف العمل والتقارير","Revenue Reconciliation":"مطابقة الإيرادات","Payouts & Payroll":"المستحقات والرواتب","Payouts &amp; Payroll":"المستحقات والرواتب","Finance — P&L & Cashflow":"المالية — الأرباح والتدفق النقدي","Finance — P&amp;L &amp; Cashflow":"المالية — الأرباح والتدفق النقدي","Equipment & Assets":"الأصول والعُدد","Equipment &amp; Assets":"الأصول والعُدد","Compliance & Licenses":"الالتزام والرُّخص","Compliance &amp; Trade Licenses":"الالتزام والرُّخص التجارية","Users & Roles":"المستخدمون والأدوار","Users &amp; Roles":"المستخدمون والأدوار","Dashboard &amp; Attention Alerts":"لوحة التحكم وتنبيهات الانتباه","Launch Pad — first-time setup":"لوحة الانطلاق — التهيئة الأولى","Insurance Management":"إدارة التأمين","The guided setup checklist: platforms, couriers, rates and your first upload — in any order you like.":"قائمة التهيئة الموجّهة: المنصات والمندوبون والأسعار وأول ملف ترفعه — بأي ترتيب تشاء.","Company health at a glance, and how attention alerts take you straight to what needs fixing.":"صحة الشركة في لمحة، وكيف تنقلك تنبيهات الانتباه مباشرة إلى ما يحتاج معالجة.","Add couriers one by one or import a whole fleet, and track each one through their lifecycle.":"أضف المندوبين فردًا فردًا أو استورد أسطولًا كاملًا، وتابع كل مندوب عبر مراحل عمله.","The five-step upload wizard end to end, then the platform and courier reports it produces.":"معالج الرفع بخطواته الخمس من البداية إلى النهاية، ثم تقارير المنصات والمندوبين الناتجة عنه.","Compare what platforms owe against what they actually paid, and clear shortfalls as they arrive.":"قارن ما تستحقه من المنصات بما دفعته فعلًا، وسوِّ الفروقات عند ورودها.","Turn processed uploads into payments — deductions, approvals, payment methods and WPS export.":"حوّل الملفات المعالجة إلى مدفوعات — الخصومات والاعتمادات وطرق الدفع وتصدير ملف حماية الأجور.","Cash position, forecasts, expense breakdown and profitability, all fed by your operational data.":"الوضع النقدي والتوقعات وتوزيع المصروفات والربحية، كلها مبنية على بياناتك التشغيلية.","Serialized assets and consumable stock: assignment, maintenance schedules and depreciation.":"الأصول المرقّمة والمخزون الاستهلاكي: التسليم وجداول الصيانة والإهلاك.","Every policy in one register, with expiry alerts, renewals in place and coverage gaps called out.":"كل وثيقة في سجل واحد، مع تنبيهات الانتهاء والتجديد في مكانه وإبراز فجوات التغطية.","Trade licenses, visas and permits — tracked, scored, renewed and ready for an audit.":"الرخص التجارية والتأشيرات والتصاريح — متابعة وتقييم وتجديد وجاهزية للتفتيش.","Invite your team and give each person exactly the access their job needs.":"ادعُ فريقك وامنح كل شخص الصلاحيات التي يحتاجها عمله بالضبط.","Four steps to get Speedy Delivery fully operational. Complete them in any order.":"أربع خطوات لتشغيل سبيدي دليفري بالكامل. أكملها بأي ترتيب.","Your company is fully configured — dashboards, reports and payroll are live.":"شركتك مهيّأة بالكامل — اللوحات والتقارير والرواتب تعمل الآن.","Add the delivery platforms your couriers work with, and set up a rate configuration per vehicle type.":"أضف منصات التوصيل التي يعمل معها مندوبوك، وأنشئ إعداد أسعار لكل نوع مركبة.","Register your courier workforce with their documents, platform assignment and transport type.":"سجّل مندوبيك مع مستنداتهم والمنصة المخصصة لهم ووسيلة النقل.","Confirm commission and payment structures — per pickup, drop-off, order or hour — for each configuration.":"أكّد هيكل العمولات والدفع — لكل استلام أو تسليم أو طلب أو ساعة — لكل إعداد.","Import your first platform timesheet so dashboards, reports and payroll run on real data.":"استورد أول كشف عمل من المنصة لتعمل اللوحات والتقارير والرواتب على بيانات حقيقية.","Add Courier":"إضافة مندوب","Bulk Upload":"رفع جماعي","Configure Rates":"إعداد الأسعار","Upload Timesheet":"رفع كشف العمل","Add Platform":"إضافة منصة","2 platforms · 3 configurations":"منصتان · 3 إعدادات","298 couriers imported":"تم استيراد 298 مندوبًا","3 configurations rated":"3 إعدادات مُسعّرة","Talabat · July 2026 processed":"طلبات · يوليو 2026 مُنفَّذ","A brand-new company starts at the Launch Pad — find it under Journey in the sidebar. It's a guided checklist that gets you operational.":"الشركة الجديدة تبدأ من لوحة الانطلاق — تجدها في القائمة الجانبية. قائمة موجّهة تنقلك إلى مرحلة التشغيل.","Four setup areas, one progress bar. Complete them in any order — Fariiq keeps track of what is left.":"أربعة مجالات تهيئة وشريط تقدّم واحد. أكملها بأي ترتيب — وفريق يتابع ما تبقّى.","Platforms first: add the delivery platforms you work with — Talabat, Keeta, Careem — and their rate configurations. This one's already done.":"المنصات أولًا: أضف منصات التوصيل التي تعمل معها — طلبات وكيتا وكريم — وإعدادات أسعارها. هذه الخطوة مكتملة.","Couriers: register your workforce. Add them one by one, or import everyone at once.":"المندوبون: سجّل فريق العمل. أضفهم فردًا فردًا أو استوردهم جميعًا مرة واحدة.","Bulk Upload takes a CSV or Excel file — 298 couriers imported in one go, with documents and platform assignments.":"الرفع الجماعي يقبل ملف CSV أو Excel — 298 مندوبًا في خطوة واحدة، مع المستندات وتوزيع المنصات.","Rates: confirm the commission and payment structure for each platform configuration. These drive every payout calculation.":"الأسعار: أكّد هيكل العمولة والدفع لكل إعداد منصة. عليها تُبنى كل عملية حساب مستحقات.","Uploads: import your first timesheet so reports, reconciliation and payroll have real data to work with.":"الملفات: استورد أول كشف عمل لتعمل التقارير والمطابقة والرواتب على بيانات حقيقية.","Not ready for a step? Skip it and come back any time — the Launch Pad keeps your place.":"لست مستعدًا لخطوة؟ تخطَّها وعُد إليها وقتما تشاء — لوحة الانطلاق تحفظ موضعك.","All four complete: your company is fully operational. The Launch Pad retires itself once setup is finished.":"اكتملت الخطوات الأربع: شركتك تعمل بالكامل. وتختفي لوحة الانطلاق تلقائيًا بعد انتهاء التهيئة.","Attention Alerts":"تنبيهات الانتباه","Thresholds":"الحدود","Active Couriers":"المندوبون النشطون","Deliveries (July)":"التوصيلات (يوليو)","Revenue (July)":"الإيرادات (يوليو)","Courier Payout":"مستحقات المندوبين","Expiring passports &amp; IDs":"جوازات وهويات قاربت الانتهاء","Insurance policies expiring":"وثائق تأمين قاربت الانتهاء","Maintenance due":"صيانة مستحقة","Mobilization bottleneck":"تعطّل في التجهيز","Ahmed Hassan · 9 days — Rashid Khan · 17 days — Omar Farouk · 24 days":"أحمد حسن · 9 أيام — راشد خان · 17 يومًا — عمر فاروق · 24 يومًا","Vehicle fleet policy · 21 days — 2 medical policies · 38 days":"وثيقة أسطول المركبات · 21 يومًا — وثيقتان طبيتان · 38 يومًا","3 motorcycles service due — 2 overdue by 4 days":"3 دراجات تحتاج صيانة — اثنتان متأخرتان 4 أيام","2 couriers stuck in visa stage beyond 30 days":"مندوبان متوقفان في مرحلة التأشيرة أكثر من 30 يومًا","+16 this month":"+16 هذا الشهر","+8.4% vs June":"+8.4% مقارنة بيونيو","+7.5% vs June":"+7.5% مقارنة بيونيو","The Dashboard is home base — an executive summary of company health, refreshed from your latest uploads.":"لوحة التحكم هي نقطة البداية — ملخص تنفيذي لصحة الشركة، يتحدّث من أحدث ملفاتك المرفوعة.","The numbers that matter, first: active couriers, delivery volume, revenue and net payout for the month.":"الأرقام المهمة أولًا: المندوبون النشطون وحجم التوصيلات والإيرادات وصافي المستحقات للشهر.","Attention Alerts collect everything that needs action — expiring documents, maintenance, bottlenecks — so nothing hides in a report you forgot to open.":"تنبيهات الانتباه تجمع كل ما يحتاج إجراءً — مستندات قاربت الانتهاء وصيانة وتعطّلات — فلا يختفي شيء داخل تقرير نسيت فتحه.","12 passports and IDs expire within 60 days. The card previews the most urgent couriers first.":"12 جوازًا وهوية تنتهي خلال 60 يومًا. تعرض البطاقة الحالات الأكثر إلحاحًا أولًا.","Review deep-links straight into the courier list, pre-filtered to exactly those 12.":"زر المراجعة ينقلك مباشرة إلى قائمة المندوبين، مُفلترة على هؤلاء الاثني عشر بالتحديد.","Like this: only the affected couriers, with expiry dates — ready for renewal actions. Clear the chip to see everyone again.":"هكذا: المندوبون المعنيون فقط مع تواريخ الانتهاء — جاهزون لإجراءات التجديد. أزل الفلتر لعرض الجميع.","Alert timing is yours: thresholds default to 90, 60 and 30 days before expiry, and every one is adjustable in Settings.":"توقيت التنبيه بيدك: الحدود الافتراضية 90 و60 و30 يومًا قبل الانتهاء، وكلها قابلة للتعديل من الإعدادات.","Insurance, maintenance, trade licenses, mobilization bottlenecks — every alert follows the same pattern: see it, click it, fix it.":"التأمين والصيانة والرخص التجارية وتعطّلات التجهيز — كل تنبيه يتبع النمط ذاته: تراه، تنقره، تعالجه.","Passport / ID expiring within 60 days · 12 couriers":"جواز أو هوية تنتهي خلال 60 يومًا · 12 مندوبًا","Emirates ID":"الهوية الإماراتية","Search by name, ID or phone…":"ابحث بالاسم أو المعرّف أو الهاتف…","All statuses":"كل الحالات","All platforms":"كل المنصات","The Courier Directory is the central hub for your whole workforce — every courier, every status, every platform.":"دليل المندوبين هو المركز الرئيسي لفريق العمل بالكامل — كل مندوب وكل حالة وكل منصة.","Filter by status, platform or city — or search by name, ID or phone. Large fleets stay navigable.":"افرز بالحالة أو المنصة أو المدينة — أو ابحث بالاسم أو المعرّف أو الهاتف. تبقى الأساطيل الكبيرة سهلة التنقل.","Add a single courier with Add Courier…":"أضف مندوبًا واحدًا من زر إضافة مندوب…","One profile holds everything: personal details, documents with expiry dates, platform assignment and transport type.":"ملف واحد يجمع كل شيء: البيانات الشخصية والمستندات وتواريخ انتهائها والمنصة المخصصة ووسيلة النقل.","Save, and the courier enters the pipeline.":"احفظ، ليدخل المندوب مسار التجهيز.","New couriers start as Processing — documents being collected and verified.":"يبدأ المندوبون الجدد بحالة قيد المعالجة — أثناء جمع المستندات والتحقق منها.","The lifecycle is tracked automatically: Processing → Mobilized → Active → Inactive. Update statuses one by one or in bulk.":"تُتابع المراحل تلقائيًا: قيد المعالجة ← جاهز للعمل ← نشط ← غير نشط. حدّث الحالات فرديًا أو جماعيًا.","Onboarding hundreds? Bulk Upload imports a whole fleet from CSV or Excel — full profiles, processing pipeline, or mobilized couriers.":"هل تضم المئات؟ الرفع الجماعي يستورد أسطولًا كاملًا من CSV أو Excel — ملفات كاملة أو مسار معالجة أو مندوبين جاهزين للعمل.","And every courier has a Ledger: a P&L waterfall of their revenue, costs and net profit — exportable to Excel or PDF.":"ولكل مندوب سجل مالي: تدرّج للأرباح يوضح إيراداته وتكاليفه وربحه الصافي — قابل للتصدير إلى Excel أو PDF.","Lifecycle:":"المراحل:","Courier Ledger &amp; P&amp;L":"السجل المالي للمندوب","Full Name *":"الاسم الكامل *","Phone *":"الهاتف *","Nationality":"الجنسية","Passport No.":"رقم جواز السفر","Visa Status":"حالة التأشيرة","Platform *":"المنصة *","Transport Type *":"نوع وسيلة النقل *","Save Courier":"حفظ المندوب","Employment · exp 11/2027":"عمل · تنتهي 11/2027","A21398476 · exp 03/2029":"A21398476 · ينتهي 03/2029","Talabat — Bikes":"طلبات — الدراجات","Upload Timesheet ":"رفع كشف العمل ","All uploads":"كل الملفات","Timesheets":"كشوف العمل","Everything to do with platform files lives in Data & Reports. The Uploads tab lists every batch you've imported.":"كل ما يتعلق بملفات المنصات يوجد في البيانات والتقارير. ويسرد تبويب الملفات كل دفعة استوردتها.","Click Upload Timesheet to start the five-step wizard.":"انقر رفع كشف العمل لبدء المعالج بخطواته الخمس.","Step 1 — pick the platform this file came from. We'll use Talabat.":"الخطوة 1 — اختر المنصة التي جاء منها الملف. سنستخدم طلبات.","Tick the rate configurations this upload covers. The rates you set up earlier are applied automatically.":"حدّد إعدادات الأسعار التي يشملها هذا الرفع. وتُطبَّق الأسعار التي أعددتها سابقًا تلقائيًا.","Only your first upload needs full configuration. Once a template is saved, apply it here and the column setup is pre-filled for every future Talabat upload.":"الرفع الأول فقط يحتاج إعدادًا كاملًا. وبعد حفظ القالب، طبّقه هنا ليُملأ إعداد الأعمدة تلقائيًا في كل رفع لاحق لطلبات.","Confirm the worked month — Fariiq defaults to last month. The payroll month is derived from your payout cadence.":"أكّد شهر العمل — يختار فريق الشهر الماضي افتراضيًا. ويُستنتج شهر الرواتب من دورة الصرف لديك.","Step 2 — keep System Calculate and Fariiq computes each courier's payout from your rates. Choose Use Platform Totals to trust the file's own total column instead.":"الخطوة 2 — أبقِ الحساب بواسطة النظام ليحسب فريق مستحقات كل مندوب من أسعارك. أو اختر إجماليات المنصة للاعتماد على عمود الإجمالي في الملف.","Step 3 — add the platform file. CSV and Excel both work, multiple files too.":"الخطوة 3 — أضف ملف المنصة. يُقبل CSV و Excel، وعدة ملفات أيضًا.","Load & Preview reads every sheet and shows the detected columns before anything is saved.":"التحميل والمعاينة يقرأ كل ورقة ويعرض الأعمدة المكتشفة قبل حفظ أي شيء.","Two reports come out of one file: each courier's earnings, and the platform's revenue to your company — broken down per configuration.":"يخرج من ملف واحد تقريران: أرباح كل مندوب، وإيراد المنصة لشركتك — موزّعًا على كل إعداد.","Step 4 — tell Fariiq which column identifies the courier. Rows are matched to your registered couriers.":"الخطوة 4 — حدّد لفريق العمود الذي يعرّف المندوب. وتُطابَق الصفوف مع المندوبين المسجلين لديك.","Then set how each pay column behaves: add or deduct, which rate applies, and the VAT treatment.":"ثم حدّد سلوك كل عمود أجر: إضافة أو خصم، وأي سعر يُطبَّق، ومعالجة ضريبة القيمة المضافة.","Step 5 — review the full configuration before processing.":"الخطوة 5 — راجع الإعداد الكامل قبل التنفيذ.","Optional but recommended: point Fariiq at the file's own total column and any discrepancy against its calculation is flagged.":"اختياري لكنه مُستحسن: أشِر لفريق إلى عمود الإجمالي في الملف ليُبرز أي فرق مع حسابه.","Save this setup as a template — next month's upload becomes a two-minute job: pick the platform, apply the template, drop in the file, process.":"احفظ هذا الإعداد كقالب — ليصبح رفع الشهر القادم مهمة دقيقتين: اختر المنصة، طبّق القالب، أضف الملف، نفّذ.","Process Timesheet.":"تنفيذ كشف العمل.","Process Timesheet":"تنفيذ كشف العمل","Done — 214 rows processed, zero errors. Courier payouts and company revenue are booked in one pass.":"تم — 214 صفًا مُنفَّذًا دون أخطاء. وتُسجَّل مستحقات المندوبين وإيراد الشركة في عملية واحدة.","Close the wizard…":"أغلق المعالج…","…and the batch now sits in Uploads. Re-download, edit or delete it any time.":"…والدفعة الآن في قائمة الملفات. حمّلها أو عدّلها أو احذفها وقتما تشاء.","One more thing — switch to Reports. Every report is built live from your uploads.":"أمر أخير — انتقل إلى التقارير. كل تقرير يُبنى مباشرة من ملفاتك المرفوعة.","Reports are filtered by platform payment month — jump to any month, or All Months for the full history.":"تُفلتر التقارير بشهر دفع المنصة — انتقل إلى أي شهر، أو اختر كل الأشهر للسجل الكامل.","By Platform: Talabat's July report — orders, pickups and drop-offs, revenue lines, down to the net amount due from the platform.":"حسب المنصة: تقرير طلبات ليوليو — الطلبات والاستلامات والتسليمات وبنود الإيراد، حتى صافي المستحق من المنصة.","And By Courier…":"وحسب المندوب…","…every courier's earnings for the month, ready for payroll. Export any report to Excel to share or archive.":"…أرباح كل مندوب للشهر، جاهزة للرواتب. صدّر أي تقرير إلى Excel للمشاركة أو الأرشفة.","Upload Successful":"تم الرفع بنجاح","Total Rows":"إجمالي الصفوف","Errors":"الأخطاء","Company Revenue":"إيراد الشركة","Step 1 of 5":"الخطوة 1 من 5","Platform & Period":"المنصة والفترة","Calculation Mode":"طريقة الحساب","Upload File":"رفع الملف","Configure Columns":"إعداد الأعمدة","Review & Process":"المراجعة والتنفيذ","Select Platform":"اختر المنصة","Select Configurations":"اختر الإعدادات","Choose which rate configurations this upload applies to.":"حدّد إعدادات الأسعار التي ينطبق عليها هذا الرفع.","Select Period":"اختر الفترة","Template available":"يوجد قالب محفوظ","A saved column template exists for Talabat. Apply it to skip manual configuration.":"يوجد قالب أعمدة محفوظ لطلبات. طبّقه لتجاوز الإعداد اليدوي.","Courier Calculation Mode":"طريقة حساب مستحقات المندوب","System Calculate":"الحساب بواسطة النظام","Fariiq computes each courier's payout from your configured rates and the file's activity columns.":"يحسب فريق مستحقات كل مندوب من أسعارك المُعدّة وأعمدة النشاط في الملف.","Use Platform Totals":"استخدام إجماليات المنصة","Trust the total column already present in the platform's file.":"الاعتماد على عمود الإجمالي الموجود أصلًا في ملف المنصة.","Rates — Talabat Bikes":"الأسعار — طلبات الدراجات","Pickup rate":"سعر الاستلام","Drop-off rate":"سعر التسليم","Per-order rate":"سعر الطلب","Rates come from your platform configuration. Override here only for this upload.":"تأتي الأسعار من إعداد المنصة. عدّلها هنا لهذا الرفع فقط.","Upload Files":"رفع الملفات","Add files (CSV or Excel)":"أضف ملفات (CSV أو Excel)","Load &amp; Preview Files":"تحميل ومعاينة الملفات","Courier Earnings Preview":"معاينة أرباح المندوبين","Company Revenue Preview":"معاينة إيراد الشركة","Sheet1 · first 3 of 214 rows":"الورقة1 · أول 3 من 214 صفًا","Sheet1 · per configuration":"الورقة1 · لكل إعداد","412.6 KB · Sheet1 → Courier &amp; Revenue":"412.6 ك.ب · الورقة1 ← المندوب والإيراد","Required Fields":"الحقول المطلوبة","Courier ID Column *":"عمود معرّف المندوب *","Courier Name Column":"عمود اسم المندوب","Courier Pay Columns":"أعمدة أجر المندوب","Company VAT is 5% — columns marked inclusive are split into net + VAT automatically.":"ضريبة الشركة 5% — وتُقسَّم الأعمدة الشاملة تلقائيًا إلى صافي + ضريبة.","Review Configuration":"مراجعة الإعداد","Worked Period":"فترة العمل","Payroll Period":"فترة الرواتب","Courier Calculation":"حساب المندوب","Revenue Calculation":"حساب الإيراد","System Calculate (4 columns)":"الحساب بواسطة النظام (4 أعمدة)","System Calculate (2 columns)":"الحساب بواسطة النظام (2 عمودان)","Total Reference Columns":"أعمدة الإجمالي المرجعية","Courier Total Column":"عمود إجمالي المندوب","Revenue Total Column":"عمود إجمالي الإيراد","Save as Template":"حفظ كقالب","Reuse this exact column setup for future Talabat uploads.":"أعد استخدام إعداد الأعمدة هذا في عمليات رفع طلبات القادمة.","Save Template":"حفظ القالب","Transaction Reports":"تقارير الحركات","Export":"تصدير","By Platform":"حسب المنصة","By Courier":"حسب المندوب","Total Revenue":"إجمالي الإيراد","Bikes + Cars · 26 working days":"دراجات + سيارات · 26 يوم عمل","Completed pickups":"استلامات مكتملة","Completed drop-offs":"تسليمات مكتملة","Net Due from Talabat":"صافي المستحق من طلبات","Bike · Per order":"دراجة · لكل طلب","Car · Per order":"سيارة · لكل طلب","Talabat Bikes":"طلبات الدراجات","Talabat Cars":"طلبات السيارات","Talabat — July 2026":"طلبات — يوليو 2026","Talabat — June 2026":"طلبات — يونيو 2026","Keeta — June 2026":"كيتا — يونيو 2026","Expected (uploads)":"المتوقع (من الملفات)","Received (bank)":"المستلم (بنكيًا)","Platform · Period":"المنصة · الفترة","Expected (July uploads)":"المتوقع (ملفات يوليو)","Received payments":"المدفوعات المستلمة","Expected revenue comes from your processed timesheet uploads. Received payments come from recorded bank transactions.":"يأتي الإيراد المتوقع من كشوف العمل المُنفَّذة. وتأتي المدفوعات المستلمة من الحركات البنكية المسجّلة.","Reconciliation lives in Finance → Revenue Tracking: did each platform actually pay what your uploads say they owe?":"المطابقة توجد في المالية ← تتبع الإيرادات: هل دفعت كل منصة فعلًا ما تقول ملفاتك إنه مستحق؟","Pick the period. Each platform-month is reconciled separately.":"اختر الفترة. تُطابَق كل منصة لكل شهر على حدة.","The summary shows the gap at a glance: expected revenue from uploads, received payments from the bank, and the outstanding difference.":"يُظهر الملخص الفرق في لمحة: الإيراد المتوقع من الملفات، والمدفوعات المستلمة من البنك، والفرق المتبقي.","Open the row to see the payment trail behind the number.":"افتح الصف لرؤية سجل المدفوعات وراء الرقم.","Outstanding drops to zero and the period is marked fully reconciled.":"ينزل المتبقي إلى صفر وتُعلَّم الفترة كمُطابَقة بالكامل.","Close the detail…":"أغلق التفاصيل…","…and the table reflects it: variance cleared, status Reconciled. Shortfalls never slip through unnoticed again.":"…ويعكس الجدول ذلك: الفرق صُفِّر والحالة مُطابَقة. فلا يمر أي نقص دون ملاحظة بعد الآن.","Expected from uploads":"المتوقع من الملفات","Received · Jul 28 — bank transfer":"مستلم · 28 يوليو — حوالة بنكية","Received · Aug 4 — bank transfer":"مستلم · 4 أغسطس — حوالة بنكية","Record Payment":"تسجيل دفعة","Fully reconciled":"مُطابَق بالكامل","Keeta · July 2026":"كيتا · يوليو 2026","Talabat · June 2026":"طلبات · يونيو 2026","Keeta · June 2026":"كيتا · يونيو 2026","Talabat · July 2026":"طلبات · يوليو 2026","Talabat — July 2026 · Payments":"طلبات — يوليو 2026 · المدفوعات","WPS file":"ملف حماية الأجور","July 2026 payout":"صرف يوليو 2026","Platform earnings":"أرباح المنصة","Approve payouts":"اعتماد المستحقات","Process payments — bank transfer":"تنفيذ المدفوعات — حوالة بنكية","Payroll turns processed uploads into payments. Every courier payout is calculated for you.":"تحوّل الرواتب الملفات المُنفَّذة إلى مدفوعات. وتُحسب مستحقات كل مندوب تلقائيًا.","Pick the payout period — the July run covers all earnings, deductions and reimbursements for that month.":"اختر فترة الصرف — تشمل دورة يوليو كل الأرباح والخصومات والمستردّات لذلك الشهر.","The math is automatic: platform earnings minus deductions (expenses, installments, fines) plus reimbursements equals net payout.":"الحساب تلقائي: أرباح المنصة ناقص الخصومات (مصروفات وأقساط وغرامات) زائد المستردّات يساوي الصافي المستحق.","Totals up top: gross earnings, total deductions, reimbursements and the net amount leaving your account.":"الإجماليات في الأعلى: الأرباح الإجمالية وإجمالي الخصومات والمستردّات والمبلغ الصافي الخارج من حسابك.","Select everyone — or only specific couriers, if you prefer partial runs.":"حدّد الجميع — أو مندوبين معيّنين فقط إن أردت دورات جزئية.","Approve the run. If approval rules are configured, payouts above your threshold wait for a designated approver.":"اعتمد الدورة. وإذا كانت قواعد الاعتماد مُعدّة، تنتظر المستحقات التي تجاوزت حدّك معتمدًا محددًا.","Then process: bank transfer, cash, check or card — Fariiq records the method per payout.":"ثم نفّذ: حوالة بنكية أو نقدًا أو شيكًا أو بطاقة — ويسجّل فريق الطريقة لكل مستحق.","Done. Every payout moves Draft → Approved → Processed → Paid, with a full audit trail.":"تم. ينتقل كل مستحق من مسودة ← معتمد ← مُنفَّذ ← مدفوع، مع سجل تدقيق كامل.","Operating in Saudi Arabia? Export a WPS-compliant payroll file for government wage protection compliance.":"تعمل في السعودية؟ صدّر ملف رواتب متوافقًا مع نظام حماية الأجور للالتزام الحكومي.","Net payout = platform earnings − deductions (expenses, installments, fines) + reimbursements · 214 couriers in this run":"الصافي المستحق = أرباح المنصة − الخصومات (مصروفات وأقساط وغرامات) + المستردّات · 214 مندوبًا في هذه الدورة","Draft run · awaiting approval":"دورة مسودة · بانتظار الاعتماد","Run approved — ready to send.":"اعتُمدت الدورة — جاهزة للإرسال.","Couriers see their payout in the courier portal immediately.":"يرى المندوبون مستحقاتهم في بوابة المندوبين فورًا.","214 payouts processed · AED 187,440.50 sent":"214 مستحقًا مُنفَّذًا · أُرسل 187,440.50 د.إ","Cashflow":"التدفق النقدي","Last 6 months":"آخر 6 أشهر","Current balance":"الرصيد الحالي","Inflows (6 mo)":"التدفقات الداخلة (6 أشهر)","Outflows (6 mo)":"التدفقات الخارجة (6 أشهر)","Net movement":"الحركة الصافية","Cashflow trend — Feb to Jul 2026":"اتجاه التدفق النقدي — فبراير إلى يوليو 2026","Projected cashflow — next 6 months":"التدفق النقدي المتوقع — الأشهر الستة القادمة","Expense breakdown — July":"توزيع المصروفات — يوليو","P&amp;L — July 2026":"الأرباح والخسائر — يوليو 2026","Courier payouts":"مستحقات المندوبين","Visa & compliance":"التأشيرات والالتزام","Vehicle maintenance":"صيانة المركبات","Office & software":"المكتب والبرمجيات","Platform revenue":"إيراد المنصات","Operating expenses":"المصروفات التشغيلية","VAT payable":"الضريبة المستحقة","Finance pulls everything together: cash position, expenses, revenue and profitability — all fed by your uploads and payroll runs.":"تجمع المالية كل شيء: الوضع النقدي والمصروفات والإيرادات والربحية — كلها مبنية على ملفاتك ودورات الرواتب.","The cashflow summary: current balance, total inflows, total outflows and net movement for the period.":"ملخص التدفق النقدي: الرصيد الحالي وإجمالي الداخل وإجمالي الخارج والحركة الصافية للفترة.","Analyze any period — weeks, months, or compare against the previous period.":"حلّل أي فترة — أسابيع أو أشهر، أو قارنها بالفترة السابقة.","The trend view shows inflows against outflows month by month. Click any month to drill into its line-item transactions.":"يعرض الاتجاه الداخل مقابل الخارج شهرًا بشهر. انقر أي شهر للتوسع في حركاته التفصيلية.","The Forecast tab projects your cash position forward…":"يتوقع تبويب التوقعات وضعك النقدي مستقبلًا…","…based on scheduled payouts, recurring expenses and expected platform revenue. Cash crunches show up before they happen.":"…بناءً على المستحقات المجدولة والمصروفات المتكررة وإيراد المنصات المتوقع. فتظهر أزمات السيولة قبل وقوعها.","Expenses break down by category — courier costs and company overheads side by side.":"تتوزع المصروفات على الفئات — تكاليف المندوبين ومصروفات الشركة جنبًا إلى جنب.","And the P&L: revenue minus courier payouts minus overheads equals net profit. The same waterfall exists per courier in the Courier Ledger.":"ثم الأرباح والخسائر: الإيراد ناقص مستحقات المندوبين ناقص المصروفات يساوي الربح الصافي. والتدرّج ذاته متاح لكل مندوب في سجله المالي.","Add Asset":"إضافة أصل","Serialized assets · 96":"أصول مرقّمة · 96","Individually tracked — motorcycles, phones, vehicles":"تُتابع فرديًا — دراجات وهواتف ومركبات","Consumable stock · 5 categories":"مخزون استهلاكي · 5 فئات","Tracked by quantity — uniforms, helmets, SIM cards":"يُتابع بالكمية — أزياء وخوذ وبطاقات اتصال","Low stock: Helmets":"مخزون منخفض: الخوذ","4 on hand · reorder level 10":"4 متوفرة · حد إعادة الطلب 10","Honda PCX 160":"هوندا PCX 160","Yamaha NMAX":"ياماها NMAX","Samsung A54":"سامسونج A54","Equipment tracks every company asset — from motorcycles and phones to uniforms and SIM cards.":"تتابع الأصول كل ممتلكات الشركة — من الدراجات والهواتف إلى الأزياء وبطاقات الاتصال.","Two tracking modes: serialized assets are tracked individually; consumables are tracked by quantity with reorder alerts.":"طريقتان للمتابعة: الأصول المرقّمة تُتابع فرديًا، والاستهلاكية بالكمية مع تنبيهات إعادة الطلب.","Adding an asset records its category, serial or plate number, purchase cost, vendor and ownership type. This Honda was added yesterday.":"تسجيل الأصل يحفظ فئته ورقمه التسلسلي أو لوحته وتكلفة شرائه والمورّد ونوع الملكية. أُضيفت هذه الهوندا أمس.","It's Available — in stock, ready to hand out. Open it to assign.":"حالته متاح — في المخزون وجاهز للتسليم. افتحه للتسليم.","Pick the courier and confirm. One tap moves the asset into their custody.":"اختر المندوب وأكّد. نقرة واحدة تنقل الأصل إلى عهدته.","Now Assigned to Khalid — logged in the asset’s transaction history and visible on his profile. Any installment deduction flows into payroll automatically.":"الآن مُسلَّم إلى خالد — مُسجَّل في سجل حركات الأصل وظاهر في ملفه. وينتقل أي خصم أقساط إلى الرواتب تلقائيًا.","Every serialized asset moves through a clear lifecycle, and depreciation tracks book value against purchase price.":"يمر كل أصل مرقّم بمراحل واضحة، ويتابع الإهلاك القيمة الدفترية مقابل سعر الشراء.","Maintenance schedules — date- or usage-based — surface as dashboard alerts before anything breaks down.":"جداول الصيانة — بالتاريخ أو بالاستخدام — تظهر كتنبيهات في لوحة التحكم قبل حدوث أي عطل.","Consumables watch themselves too: when helmets drop below the reorder level, you get a low-stock alert.":"والمواد الاستهلاكية تراقب نفسها أيضًا: عندما تنزل الخوذ عن حد إعادة الطلب يصلك تنبيه بانخفاض المخزون.","Maintenance schedules":"جداول الصيانة","Assign Asset — Honda PCX 160":"تسليم أصل — هوندا PCX 160","Assign to":"تسليم إلى","Khalid Mansour — Courier · Talabat":"خالد منصور — مندوب · طلبات","The assignment is recorded in the asset's transaction history and on the courier's profile.":"يُسجَّل التسليم في سجل حركات الأصل وفي ملف المندوب.","Confirm Assignment":"تأكيد التسليم","Add Policy":"إضافة وثيقة","Active policies":"الوثائق السارية","Expiring in 90 days":"تنتهي خلال 90 يومًا","Monthly premiums":"الأقساط الشهرية","Couriers uncovered":"مندوبون بلا تغطية","Vehicle fleet — 42 motorcycles":"أسطول المركبات — 42 دراجة","Company liability":"مسؤولية الشركة","Insurance keeps every policy in one register — courier medical cover, vehicle fleet policies and company liability.":"يحفظ التأمين كل وثيقة في سجل واحد — التغطية الطبية للمندوبين ووثائق أسطول المركبات ومسؤولية الشركة.","At a glance: active policies, what expires soon, monthly premium cost and couriers with no cover at all.":"في لمحة: الوثائق السارية وما يقارب الانتهاء وتكلفة الأقساط الشهرية والمندوبون بلا أي تغطية.","Add a policy with its provider, coverage type, premium, dates and the policy document itself.":"أضف وثيقة مع مزوّدها ونوع التغطية والقسط والتواريخ ومستند الوثيقة نفسه.","Policies attach to a courier, a vehicle or the company — so you always know exactly who is covered.":"تُربط الوثائق بمندوب أو مركبة أو الشركة — لتعرف دائمًا من المشمول بالتغطية بالتحديد.","The fleet policy expires in 21 days. Fariiq flags it at 90, 60 and 30 days out — the same alerts you see on the dashboard.":"تنتهي وثيقة الأسطول بعد 21 يومًا. ويُنبّه فريق قبل 90 و60 و30 يومًا — وهي التنبيهات ذاتها في لوحة التحكم.","Renew in place: new dates, updated premium, new document. The old policy stays in the history.":"جدّد في مكانه: تواريخ جديدة وقسط محدّث ومستند جديد. وتبقى الوثيقة القديمة في السجل.","Active again, expiry a year out. No lapsed cover, no scrambling.":"سارية مرة أخرى، وانتهاؤها بعد عام. لا انقطاع في التغطية ولا ارتباك.","Coverage gaps are called out explicitly — six active couriers have no medical policy on record.":"تُبرز فجوات التغطية صراحةً — ستة مندوبين نشطين بلا وثيقة طبية مسجّلة.","And every premium flows into your P&L as an operating expense, so insurance cost per courier is always visible.":"وينتقل كل قسط إلى أرباحك وخسائرك كمصروف تشغيلي، لتبقى تكلفة التأمين لكل مندوب ظاهرة دائمًا.","Coverage gap: 6 active couriers have no medical policy on record":"فجوة تغطية: 6 مندوبين نشطين بلا وثيقة طبية مسجّلة","Premiums in P&amp;L":"الأقساط في الأرباح والخسائر","Renew Policy — Vehicle fleet":"تجديد وثيقة — أسطول المركبات","New start date":"تاريخ البداية الجديد","New expiry date":"تاريخ الانتهاء الجديد","Policy document":"مستند الوثيقة","Attach PDF":"إرفاق PDF","Confirm Renewal":"تأكيد التجديد","Add Document":"إضافة مستند","Compliance score":"درجة الالتزام","All documents":"كل المستندات","Trade License — Dubai":"رخصة تجارية — دبي","VAT Registration":"التسجيل الضريبي","Ahmed Hassan — Visa":"أحمد حسن — تأشيرة","Delivery Permit — Sharjah":"تصريح توصيل — الشارقة","Omar Farouk — Labour Card":"عمر فاروق — بطاقة عمل","Compliance holds every document your company and couriers must keep valid — trade licenses, visas, permits, certificates.":"يحفظ الالتزام كل مستند يجب أن يبقى ساريًا لشركتك ومندوبيك — رخص تجارية وتأشيرات وتصاريح وشهادات.","A single compliance score tells you where you stand, with valid, expiring and expired counts beside it.":"درجة التزام واحدة تخبرك بموقعك، وبجانبها أعداد السارية والمقاربة للانتهاء والمنتهية.","Each document carries its type, issuing authority, number, issue and expiry dates, and the scan itself.":"يحمل كل مستند نوعه والجهة المصدِرة ورقمه وتاريخي الإصدار والانتهاء والنسخة الممسوحة نفسها.","Your Dubai trade license expires in 34 days — the highest-stakes document in the register.":"تنتهي رخصتك التجارية في دبي بعد 34 يومًا — وهي أهم مستند في السجل.","Record the renewal: new expiry, the fee, the updated PDF. The fee can be logged straight to your expenses.":"سجّل التجديد: الانتهاء الجديد والرسوم والملف المحدّث. ويمكن تسجيل الرسوم مباشرة في مصروفاتك.","Valid again, and the score recovers. The previous version stays in the document history.":"سارية مرة أخرى، وتتحسّن الدرجة. وتبقى النسخة السابقة في سجل المستند.","Nothing lives in a shared drive: every document is stored, searchable and downloadable when an inspector asks.":"لا شيء في مجلد مشترك: كل مستند محفوظ وقابل للبحث والتحميل عند طلب المفتّش.","And every change is logged — who updated what, and when. That is your audit trail.":"ويُسجَّل كل تغيير — من حدّث ماذا ومتى. وهذا هو سجل التدقيق.","Every document is stored with its scan or PDF — searchable, and downloadable during an audit":"يُحفظ كل مستند مع نسخته الممسوحة أو ملف PDF — قابل للبحث والتحميل أثناء التدقيق","Audit log":"سجل التدقيق","Renew — Trade License Dubai":"تجديد — رخصة دبي التجارية","Renewal fee":"رسوم التجديد","Updated document":"المستند المحدّث","Log fee as expense":"تسجيل الرسوم كمصروف","Yes — Compliance":"نعم — الالتزام","Save Renewal":"حفظ التجديد","Invite User":"دعوة مستخدم","Company Admin":"مدير الشركة","Fleet Manager":"مدير الأسطول","Viewer":"مُشاهد","Full access — settings, users, finance, payroll and all company data.":"صلاحية كاملة — الإعدادات والمستخدمون والمالية والرواتب وكل بيانات الشركة.","Uploads, reconciliation, payroll and reports. No company settings.":"الملفات والمطابقة والرواتب والتقارير. دون إعدادات الشركة.","Couriers, equipment and compliance for their assigned fleet only.":"المندوبون والأصول والالتزام لأسطوله المخصص فقط.","Read-only dashboards and reports. Cannot change any record.":"لوحات وتقارير للقراءة فقط. دون تعديل أي سجل.","User management lives in Settings. Your team gets access to exactly what their job needs — and nothing more.":"إدارة المستخدمين في الإعدادات. يحصل فريقك على ما يحتاجه عمله بالضبط — لا أكثر.","Four built-in roles: Company Admin, Finance, Fleet Manager and Viewer. Each is a fixed bundle of permissions.":"أربعة أدوار جاهزة: مدير الشركة والمالية ومدير الأسطول والمُشاهد. كل دور حزمة صلاحيات ثابتة.","Invite a colleague by email — no password to share, no seat to configure.":"ادعُ زميلًا بالبريد الإلكتروني — دون مشاركة كلمة مرور ودون إعداد مقعد.","Pick their role. Finance can run payroll and see the books, but cannot change company settings.":"اختر دوره. المالية تستطيع تنفيذ الرواتب ومطالعة الحسابات، دون تغيير إعدادات الشركة.","Send the invitation. They set their own password from the emailed link.":"أرسل الدعوة. ويضبط هو كلمة مروره من الرابط المُرسل.","The user appears as Invited until they accept — you always know who has actually joined.":"يظهر المستخدم بحالة مدعو حتى يقبل — لتعرف دائمًا من انضم فعلًا.","Once accepted, they are Active and can sign in. Deactivate or change a role at any time.":"بعد القبول يصبح نشطًا ويستطيع الدخول. عطّل الحساب أو غيّر الدور وقتما تشاء.","Permissions also scope the data itself: a Fleet Manager only ever sees their own couriers and platforms.":"تحدّ الصلاحيات نطاق البيانات نفسها: مدير الأسطول لا يرى إلا مندوبيه ومنصاته.","And the activity log records who did what — every upload, payout approval and settings change is attributable.":"ويسجّل سجل النشاط من فعل ماذا — كل رفع واعتماد مستحقات وتغيير إعدادات منسوب إلى صاحبه.","Data is scoped by role — a Fleet Manager sees only their assigned couriers and platforms":"نطاق البيانات محدد بالدور — يرى مدير الأسطول مندوبيه ومنصاته المخصصة فقط","Activity log":"سجل النشاط","Full name":"الاسم الكامل","Everything, including users and settings":"كل شيء، بما في ذلك المستخدمون والإعدادات","Uploads, reconciliation, payroll, reports":"الملفات والمطابقة والرواتب والتقارير","Assigned couriers, equipment, compliance":"المندوبون المخصصون والأصول والالتزام","Read-only dashboards and reports":"لوحات وتقارير للقراءة فقط","Send Invitation":"إرسال الدعوة"};
+  var AR_TITLE = "جولة المالية والتدفق النقدي — فريق";
+  var EN_TITLE = document.title;
+  var ICON_SWAP = { arrow_back: 'arrow_forward', arrow_forward: 'arrow_back' };
+  var KEY = 'fariiq_wt_lang';
+  var lang = 'en';
+  try { lang = localStorage.getItem(KEY) || 'en'; } catch (e) {}
+
+  function toAr(s) {
+    var t = s.trim();
+    if (!t) return s;
+    var lead = s.slice(0, s.indexOf(t.charAt(0)) === -1 ? 0 : s.indexOf(t.charAt(0)));
+    var tail = s.slice(lead.length + t.length);
+    var v = DICT[t];
+    if (v === undefined && ICON_SWAP[t]) v = ICON_SWAP[t];
+    if (v === undefined) {
+      v = t;
+      var m = v.match(/^in (\d+) days$/);
+      if (m) v = 'بعد ' + m[1] + ' يومًا';
+      m = v.match(/^\u2026 and (\d+) more(?: couriers)?$/);
+      if (m) v = '… و' + m[1] + ' غير ذلك';
+      m = v.match(/^(\d+) of (\d+) selected$/);
+      if (m) v = m[1] + ' من ' + m[2] + ' محدد';
+      m = v.match(/^(\d+) steps$/);
+      if (m) { var k = +m[1]; v = m[1] + (k >= 3 && k <= 10 ? ' خطوات' : ' خطوة'); }
+      else { m = v.match(/^(\d+) rows$/); if (m) v = m[1] + ' صف'; }
+      m = v.match(/^([\d,]+) orders$/);
+      if (m) v = m[1] + ' طلب';
+      v = v.replace(/\bAED\b/g, 'د.إ').replace(/\/ mo\b/g, '/ شهريًا')
+           .replace(/\u2192/g, '\u2190').replace(/\bSheet1\b/g, 'الورقة1');
+      if (v === t && /^[A-Za-z][A-Za-z\s]*$/.test(t) === false) { /* leave mixed/data strings */ }
+    }
+    return lead + v + tail;
+  }
+
+  var obs = null;
+  function apply() {
+    if (obs) obs.disconnect();
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        var p = n.parentNode;
+        if (!p) return NodeFilter.FILTER_REJECT;
+        var tag = p.nodeName;
+        if (tag === 'SCRIPT' || tag === 'STYLE') return NodeFilter.FILTER_REJECT;
+        if (p.closest && p.closest('[data-lang-ui]')) return NodeFilter.FILTER_REJECT;
+        return n.nodeValue && n.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    var n, nodes = [];
+    while ((n = w.nextNode())) nodes.push(n);
+    nodes.forEach(function (node) {
+      // Re-capture whenever React rewrote the node since our last write, so a
+      // reused text node picking up new copy is not overwritten with a stale
+      // translation. node.__ar is the last value THIS runtime wrote.
+      if (node.__ar === undefined || node.nodeValue !== node.__ar) node.__en = node.nodeValue;
+      var target = lang === 'ar' ? toAr(node.__en) : node.__en;
+      node.__ar = target;
+      if (node.nodeValue !== target) node.nodeValue = target;
+    });
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
+    document.title = lang === 'ar' ? AR_TITLE : EN_TITLE;
+    var btn = document.getElementById('langToggle');
+    if (btn) btn.textContent = lang === 'ar' ? 'English' : 'العربية';
+    if (obs) obs.observe(document.body, { childList: true, subtree: true, characterData: true });
+  }
+
+  function mountFont() {
+    var l = document.createElement('link');
+    l.rel = 'stylesheet';
+    l.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap';
+    document.head.appendChild(l);
+    var s = document.createElement('style');
+    s.textContent = 'html[dir="rtl"] body, html[dir="rtl"] body *:not([style*="Material Symbols"]):not([style*="Material Symbols"] *) { font-family: "Noto Sans Arabic", "Noto Sans", system-ui, sans-serif !important; }' +
+      'html[dir="rtl"] [style*="font-variant-numeric"] { direction: ltr; }' +
+      '#langToggle { position: fixed; inset-block-end: 18px; inset-inline-start: 18px; z-index: 9999;' +
+      ' background: #2E3445; color: #FDF8F0; border: 1px solid rgba(253,248,240,0.25); border-radius: 999px;' +
+      ' padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 14px rgba(46,52,69,0.28);' +
+      ' font-family: "Noto Sans Arabic", "Noto Sans", system-ui, sans-serif; }' +
+      '#langToggle:hover { background: #3D4552; }';
+    document.head.appendChild(s);
+  }
+
+  function mount() {
+    mountFont();
+    var btn = document.createElement('button');
+    btn.id = 'langToggle';
+    btn.setAttribute('data-lang-ui', '');
+    btn.setAttribute('aria-label', 'Switch language');
+    btn.textContent = lang === 'ar' ? 'English' : 'العربية';
+    btn.onclick = function () {
+      lang = lang === 'ar' ? 'en' : 'ar';
+      try { localStorage.setItem(KEY, lang); } catch (e) {}
+      apply();
+    };
+    document.body.appendChild(btn);
+    obs = new MutationObserver(function () {
+      if (obs.__q) return;
+      obs.__q = true;
+      requestAnimationFrame(function () { obs.__q = false; apply(); });
+    });
+    apply();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);
+  else mount();
+})();
+</script>
+<template id="__bundler_thumbnail">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" rx="24" fill="#2E3445"/><circle cx="100" cy="100" r="46" fill="#B8996F"/><text x="100" y="116" text-anchor="middle" font-family="system-ui,sans-serif" font-size="44" font-weight="700" fill="#FDF8F0">FI</text><text x="100" y="172" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" font-weight="600" fill="#E7D9C2">Finance</text></svg>
+</template>
+</body>
+</html>

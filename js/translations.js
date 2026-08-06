@@ -20,6 +20,13 @@ const translations = {
       "hero_description": "Manage your fleet operations, finances, HR, and more \u2014 with dedicated portals for admins, employees, and couriers, all from one platform.",
       "hero_cta_primary": "Get Started",
       "hero_cta_secondary": "Learn More",
+      "demo_title": "See Fariiq in Action",
+      "demo_subtitle": "A short walkthrough of how Fariiq handles your fleet, payroll, and finances end to end.",
+      "demo_video_label": "Fariiq product tutorial video",
+      "demo_video_fallback": "Your browser does not support embedded video.",
+      "demo_cta_text": "Want to try it yourself? Step through any feature at your own pace.",
+      "demo_cta_button": "Explore the walkthroughs",
+      "nav_walkthroughs": "Walkthroughs",
       "features_title": "Everything You Need to Manage Your Fleet",
       "features_subtitle": "Powerful tools designed specifically for 3PL operators working with leading delivery platforms in the GCC.",
       "feature_1_title": "Automated Timesheet Reconciliation",
@@ -149,6 +156,13 @@ const translations = {
       "hero_description": "أدر عمليات أسطولك، والشؤون المالية، والموارد البشرية، والمزيد \u2014 مع بوابات مخصصة للمسؤولين والموظفين والمناديب، من منصة واحدة.",
       "hero_cta_primary": "ابدأ الآن",
       "hero_cta_secondary": "اعرف المزيد",
+      "demo_title": "شاهد فريق أثناء العمل",
+      "demo_subtitle": "جولة قصيرة توضح كيف يدير فريق أسطولك ورواتبك وحساباتك من البداية إلى النهاية.",
+      "demo_video_label": "فيديو تعريفي عن منصة فريق",
+      "demo_video_fallback": "متصفحك لا يدعم تشغيل الفيديو.",
+      "demo_cta_text": "هل تريد التجربة بنفسك؟ تعرّف على كل ميزة بالسرعة التي تناسبك.",
+      "demo_cta_button": "استكشف الجولات التعريفية",
+      "nav_walkthroughs": "الجولات التعريفية",
       "features_title": "كل ما تحتاجه لإدارة أسطولك",
       "features_subtitle": "أدوات قوية مصممة خصيصاً لمشغلي الطرف الثالث اللوجستي العاملين مع منصات التوصيل الرائدة في الخليج.",
       "feature_1_title": "مطابقة الجداول الزمنية تلقائياً",
@@ -424,6 +438,22 @@ function applyTranslations() {
     }
   });
 
+  // Update all elements with data-i18n-aria attribute
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+    const key = el.getAttribute('data-i18n-aria');
+    if (trans[key]) {
+      el.setAttribute('aria-label', trans[key]);
+    }
+  });
+
+  // Update all elements with data-i18n-title attribute
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const key = el.getAttribute('data-i18n-title');
+    if (trans[key]) {
+      el.setAttribute('title', trans[key]);
+    }
+  });
+
   // Update all elements with data-i18n-html attribute (for mixed content)
   document.querySelectorAll('[data-i18n-html]').forEach(el => {
     const keys = el.getAttribute('data-i18n-html').split(',');
@@ -451,6 +481,18 @@ function applyTranslations() {
   document.querySelectorAll('a[href*="app.fariiq.com"]').forEach(link => {
     const base = link.href.split('?')[0];
     link.href = lang === 'en' ? base : base + '?lang=' + lang;
+  });
+
+  // Keep the walkthroughs on the same language as the site. They read this key
+  // when they load; the message tells an already-loaded embed (the overview
+  // animation on this page) to switch in place without restarting.
+  try {
+    localStorage.setItem('fariiq_wt_lang', lang);
+  } catch (e) {}
+  document.querySelectorAll('iframe[src*="walkthroughs/"]').forEach(frame => {
+    if (frame.contentWindow) {
+      frame.contentWindow.postMessage({ type: 'fariiq-lang', lang: lang }, window.location.origin);
+    }
   });
 
   // Update font family for Arabic

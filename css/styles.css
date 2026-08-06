@@ -311,12 +311,19 @@ p {
 }
 
 /* Mobile Menu */
+/* The panel is fixed, but .nav's backdrop-filter makes .nav its containing
+   block, so `bottom: 0` measured against the 88px nav instead of the viewport
+   and left the panel 48px tall with the links spilling over the page. Sizing it
+   explicitly is immune to that. dvh keeps it right as mobile browser chrome
+   slides away; the vh line above is the fallback. */
 .nav__mobile-menu {
   display: none;
   position: fixed;
   top: var(--nav-height);
   inset-inline: 0;
-  bottom: 0;
+  height: calc(100vh - var(--nav-height));
+  height: calc(100dvh - var(--nav-height));
+  overflow-y: auto;
   background-color: var(--color-background);
   padding: var(--spacing-6);
   z-index: 999;
@@ -474,6 +481,65 @@ p {
   margin-inline: auto;
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-xl);
+}
+
+/* ========================================
+   Tutorial Video Section
+   ======================================== */
+.demo__header {
+  text-align: center;
+  max-width: 600px;
+  margin-inline: auto;
+  margin-bottom: var(--spacing-12);
+}
+
+.demo__title {
+  margin-bottom: var(--spacing-4);
+}
+
+.demo__frame {
+  max-width: 900px;
+  margin-inline: auto;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+  background-color: #0a0a0a;
+  container-type: inline-size;
+}
+
+/* The overview is an HTML animation, not a video file: a 16:9 canvas with a
+   fixed 44px playback bar under it. The height has to be the canvas ratio PLUS
+   that bar, or the canvas shrinks and leaves bars down the sides. The
+   aspect-ratio is the fallback for browsers without container query units. */
+.demo__video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1920 / 1124;
+  height: calc(100cqw * 9 / 16 + 44px);
+  border: 0;
+}
+
+.demo__cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-8);
+  text-align: center;
+}
+
+.demo__cta p {
+  margin: 0;
+  max-width: 46ch;
+}
+
+@media (min-width: 768px) {
+  .demo__cta {
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--spacing-6);
+    text-align: start;
+  }
 }
 
 /* ========================================

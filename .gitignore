@@ -4,6 +4,10 @@
 # Development mockups
 mockups/
 
+# Walkthrough handoff bundle. The deployed copy lives in walkthroughs/; this is
+# the raw delivery, and it carries 7.5 MB of standalone samples we do not ship.
+fariiq_walkthroughs_site/
+
 # Dependencies
 node_modules/
 
