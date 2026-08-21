@@ -1,0 +1,14 @@
+{
+  "name": "fariiq-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fariiq marketing site. Static HTML/CSS/JS, no build step. This package.json exists only to pin the lint toolchain.",
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.1",
+    "globals": "^17.11.0"
+  }
+}
