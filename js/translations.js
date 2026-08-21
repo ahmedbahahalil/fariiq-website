@@ -488,7 +488,11 @@ function applyTranslations() {
   // animation on this page) to switch in place without restarting.
   try {
     localStorage.setItem('fariiq_wt_lang', lang);
-  } catch (e) {}
+  } catch (e) {
+    // Ignored on purpose: localStorage throws in private mode and when cookies
+    // are blocked. The language switch still works for this page load, it just
+    // will not persist.
+  }
   document.querySelectorAll('iframe[src*="walkthroughs/"]').forEach(frame => {
     if (frame.contentWindow) {
       frame.contentWindow.postMessage({ type: 'fariiq-lang', lang: lang }, window.location.origin);
