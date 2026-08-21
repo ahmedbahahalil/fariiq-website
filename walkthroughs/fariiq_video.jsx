@@ -252,7 +252,8 @@ function ImageSprite({
     <div style={{
       width: '100%', height: '100%',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'repeating-linear-gradient(135deg, #e9e6df 0 10px, #dcd8cf 10px 20px)',
+      background: '#F2ECE0',
+      border: '2px dashed #C9C0AF',
       color: '#6b6458',
       fontFamily: 'JetBrains Mono, ui-monospace, monospace',
       fontSize: 13,
@@ -1175,7 +1176,7 @@ function RoutePayouts({ start }) {
         <TopBar title="Payouts" sub="Cycle: 1–15 Jan 2026 · bi-weekly" />
         <div style={{ flex: 1, padding: '28px 40px', position: 'relative' }}>
           <div style={{ display: 'flex', gap: 22 }}>
-            <div style={{ flex: 1, background: 'linear-gradient(135deg,#FBF4E8,#F6EEE0)', border: `1px solid ${C.goldSoft}`, borderRadius: 16, padding: '26px 30px' }}>
+            <div style={{ flex: 1, background: C.sand2, border: `1px solid ${C.goldSoft}`, borderRadius: 16, padding: '26px 30px' }}>
               <div style={{ fontFamily: FONT, fontSize: 15, color: C.goldDeep, fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Total payout this cycle</div>
               <div style={{ fontFamily: FONT, fontWeight: 800, fontSize: 58, color: C.text, letterSpacing: '-0.02em', marginTop: 8, fontVariantNumeric: 'tabular-nums' }}>{money(total)}</div>
               <div style={{ fontFamily: FONT, fontSize: 17, color: C.slate, marginTop: 6 }}>across <b style={{ color: C.text, fontVariantNumeric: 'tabular-nums' }}>{num(riders)}</b> couriers · 6 platforms</div>
@@ -1336,7 +1337,7 @@ function RoutePnl({ start }) {
               );
             })}
           </div>
-          <div style={{ marginTop: 18, opacity: fade(t, start + 1.8, 91, 0.35), display: 'flex', alignItems: 'center', background: 'linear-gradient(135deg,#FBF4E8,#F6EEE0)', border: `1px solid ${C.goldSoft}`, borderRadius: 14, padding: '20px 28px', gap: 40 }}>
+          <div style={{ marginTop: 18, opacity: fade(t, start + 1.8, 91, 0.35), display: 'flex', alignItems: 'center', background: C.sand2, border: `1px solid ${C.goldSoft}`, borderRadius: 14, padding: '20px 28px', gap: 40 }}>
             <Tot label="Total revenue" v={money(totRev * gp)} />
             <Tot label="Total cost" v={money(totCost * gp)} />
             <div style={{ marginInlineStart: 'auto', textAlign: 'end' }}>
