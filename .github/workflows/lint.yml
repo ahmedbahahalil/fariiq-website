@@ -1,0 +1,32 @@
+name: Lint
+
+# The site's only gate. It is static HTML, CSS and browser JavaScript with no
+# build step and no test suite, so `eslint .` is the whole check. Until now it
+# only ran on a contributor's machine, which meant nothing enforced it.
+#
+# There is deliberately no deploy workflow here. Pages is configured to deploy
+# from the branch, so GitHub generates and owns `pages-build-deployment`. That
+# managed workflow still pins actions/upload-artifact@v4 and warns about the
+# Node 20 deprecation, but it is not ours to edit: fixing it means switching
+# the Pages source to GitHub Actions and taking over deployment of
+# www.fariiq.com. That is a deliberate decision, not an oversight.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  eslint:
+    name: eslint (browser JS)
+    runs-on: ubuntu-latest
+    steps:
+      # v7 on both, so this workflow does not reintroduce the Node 20
+      # deprecation warning it sits next to.
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
